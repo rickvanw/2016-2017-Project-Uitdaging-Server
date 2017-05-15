@@ -1,5 +1,7 @@
 /**
- * Created by rickv on 15-5-2017.
+ * REST
+ *
+ * Created by rickv, maurice_2 on 15-5-2017.
  */
 // Add dependencies
 var express = require('express');
@@ -12,7 +14,8 @@ var bodyparser = require('body-parser');
 
 var app = express();
 
-var publicUrls = ["/complaints", "user/add", "/user", "/user/change", "/user/password-reset-request", "/user/confirm-password-reset"];
+var publicUrls = ["/complaints", "/exercise", "/exercise/rate", "/treatment/add", "/treatment/exercises-day", "/treatment/exercises-done", "user/add", "/user", "/user/change", "/user/password-reset-request", "/user/confirm-password-reset", "/evaluation", "/evaluation/add"];
+
 
 var connection = mysql.createConnection({
     host: 'localhost',
