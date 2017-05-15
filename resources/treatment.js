@@ -16,6 +16,7 @@ var config = require('./config.js');
 var utils = require('./utils.js');
 
 router.post('/add', function (req, res) {
+    console.log("JOEgegergrRR");
     var start_date = req.body.start_date;
     var end_date = req.body.end_date;
 
@@ -38,12 +39,13 @@ router.post('/add', function (req, res) {
 
 router.get('/exercises-day', function (req, res) {
     // TODO token
-    var date = req.header('date');
+    var date = req.header('checkdate');
+    console.log("Date: " + date);
 
     // TODO token check
     var query = 'SELECT *   ' +
         'FROM exercise ' +
-        'INNER JOIN treatment_exercise.exerciseId = exercise.exerciseId ' +
+        'INNER JOIN treatment_exercise ON exercise.exercise_id = treatment_exercise.exercise_id ' +
         'WHERE todo_datetime = ' + date;
 
     connection.query(query, function (err, result) {

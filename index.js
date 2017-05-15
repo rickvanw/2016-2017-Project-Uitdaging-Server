@@ -16,14 +16,6 @@ var app = express();
 
 var publicUrls = ["/complaints", "/exercise", "/exercise/rate", "/treatment/add", "/treatment/exercises-day", "/treatment/exercises-done", "user/add", "/user", "/user/change", "/user/password-reset-request", "/user/confirm-password-reset", "/evaluation", "/evaluation/add"];
 
-
-var connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'actions'
-});
-
 /*
  * Fixing cross domain problems
  */
@@ -88,8 +80,8 @@ app.use('/complaints', complaint);
 // var exercise = require("./resources/exercise.js");
 // app.use('/exercise', exercise);
 //
-// var treatment = require("./resources/treatment.js");
-// app.use('/treatment', treatment);
-//
+var treatment = require("./resources/treatment.js");
+app.use('/treatment', treatment);
+
 var user = require("./resources/user.js");
 app.use('/user', user);
