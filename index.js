@@ -1,7 +1,5 @@
 /**
- * REST
- *
- * Created by rickv, maurice_2 on 15-5-2017.
+ * Created by rickv on 15-5-2017.
  */
 // Add dependencies
 var express = require('express');
@@ -14,7 +12,7 @@ var bodyparser = require('body-parser');
 
 var app = express();
 
-var publicUrls = ["/complaints", "/exercise", "/exercise/rate", "/treatment/add", "/treatment/exercises-day", "/treatment/exercises-done", "user/add", "/user", "/user/change", "/user/password-reset-request", "/user/confirm-password-reset", "/evaluation", "/evaluation/add"];
+var publicUrls = ["/complaints", "/user/add", "/user/login", "/user/change", "/user/password-reset-request", "/user/confirm-password-reset"];
 
 /*
  * Fixing cross domain problems
@@ -67,6 +65,7 @@ app.use(bodyparser.urlencoded({
 app.listen(8000, function () {
     console.log("opened on port 8000");
 });
+
 
 
 //--------------setting routers---------------
