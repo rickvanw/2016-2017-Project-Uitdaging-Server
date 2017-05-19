@@ -12,7 +12,7 @@ var bodyparser = require('body-parser');
 
 var app = express();
 
-var publicUrls = ["/complaints", "/user/add", "/user/login", "/user/change", "/user/password-reset-request", "/user/confirm-password-reset"];
+var publicUrls = ["/complainlts", "/user/add", "/user/login", "/user/change", "/user/password-reset-request", "/user/confirm-password-reset"];
 
 /*
  * Fixing cross domain problems
@@ -25,7 +25,7 @@ app.use(cors());
  * called for every api call, to check authorization
  */
 app.use(function (req, res, next) {
-    console.log("request " + req.url)
+    console.log("request " + req.url);
     if (isPublic(req.url)) {
         next();
         return;
