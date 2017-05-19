@@ -12,7 +12,7 @@ var bodyparser = require('body-parser');
 
 var app = express();
 
-var publicUrls = ["/complainlts", "/user/add", "/user/login", "/user/change", "/user/password-reset-request", "/user/confirm-password-reset"];
+var publicUrls = ["/treatment/exercises-day","/complainlts", "/user/add", "/user/login", "/user/change", "/user/password-reset-request", "/user/confirm-password-reset"];
 
 /*
  * Fixing cross domain problems

@@ -45,15 +45,14 @@ router.get('/exercises-day', function (req, res) {
     // TODO token check
     var query = 'SELECT *   ' +
         'FROM exercise ' +
-        'INNER JOIN treatment_exercise ON exercise.exercise_id = treatment_exercise.exercise_id ' +
-        'WHERE todo_datetime = ' + date;
+        'INNER JOIN treatment_exercise ON exercise.exercise_id = treatment_exercise.exercise_id ';
+        //'WHERE todo_datetime = ' + '2017-05-19 00:00:00';
 
     connection.query(query, function (err, result) {
         if (err){
             res.status(404).send("Niet gevonden");
             return;
         }
-
         res.status(200).json(result);
     });
 });
