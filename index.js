@@ -12,7 +12,7 @@ var bodyparser = require('body-parser');
 
 var app = express();
 
-var publicUrls = ["/treatment/exercises-day","/complainlts", "/user/add", "/user/login", "/user/change", "/user/password-reset-request", "/user/confirm-password-reset"];
+var publicUrls = ["/exercise/rate","/treatment/exercises-day","/complainlts", "/user/add", "/user/login", "/user/change", "/user/password-reset-request", "/user/confirm-password-reset"];
 
 /*
  * Fixing cross domain problems
@@ -76,9 +76,9 @@ app.use('/complaints', complaint);
 // var evaluation = require("./resources/evaluation.js");
 // app.use('/evaluation', evaluation);
 //
-// var exercise = require("./resources/exercise.js");
-// app.use('/exercise', exercise);
-//
+var exercise = require("./resources/exercise.js");
+app.use('/exercise', exercise);
+
 var treatment = require("./resources/treatment.js");
 app.use('/treatment', treatment);
 

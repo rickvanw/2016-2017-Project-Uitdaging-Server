@@ -16,10 +16,7 @@ var config = require('./config.js');
 var utils = require('./utils.js');
 
 router.get('', function (req, res) {
-    // TODO token
     var exerciseId = req.header('exerciseId');
-
-    // TODO token check
     var query = 'SELECT * FROM exercise WHERE exercise_id = ' + exerciseId;
 
     connection.query(query, function (err, exercise) {
@@ -35,12 +32,21 @@ router.get('', function (req, res) {
 });
 
 router.put('/rate', function (req, res) {
-    // TODO token
     var exerciseId = req.body.exerciseId;
     var rating = req.body.rating;
+    var query="";
 
-    // TODO token check
-    var query = 'UPDATE exercise SET rating = ' + rating + ' WHERE exercise_id = ' + exerciseId;
+    // TODO user can only rate one exercise once
+    var userId = req.decoded.user_id;
+
+
+    if (rating==1){
+        query = 'UPDATE exercise SET rating = rating+1 WHERE exercise_id = ' + exerciseId;
+
+    }else{
+        query = 'UPDATE exercise SET rating = rating-1 WHERE exercise_id = ' + exerciseId;
+    }
+
 
     connection.query(query, function (err, rating) {
         if (err) {
