@@ -34,17 +34,37 @@ router.get('', function (req, res) {
 router.put('/rate', function (req, res) {
     var exerciseId = req.body.exerciseId;
     var rating = req.body.rating;
+    var user_id = req.decoded.user_id;
     var query="";
 
     // TODO user can only rate one exercise once
-    var userId = req.decoded.user_id;
+    //var userId = req.decoded.user_id;
 
 
     if (rating==1){
-        query = 'UPDATE exercise SET rating = rating+1 WHERE exercise_id = ' + exerciseId;
-
+        // Like
+        query =
+        'UPDATE treatment_exercise AS te '+
+        'INNER JOIN user_treatment AS ut ON te.treatment_id = ut.treatment_id '+
+        'INNER JOIN treatment AS t ON ut.treatment_id = t.treatment_id '+
+        'INNER JOIN exercise AS e ON te.exercise_id = e.exercise_id '+
+        'SET te.rating_user = 1, e.rating = rating+1 '+
+        'WHERE ut.user_id = ' + user_id + ' '+
+        'AND te.exercise_id = '+ exerciseId + ' '+
+        'AND t.end_date >= "' + utils.getCurrentDate() +'" '+
+        'AND t.start_date <= "' + utils.getCurrentDate() +'" ';
     }else{
-        query = 'UPDATE exercise SET rating = rating-1 WHERE exercise_id = ' + exerciseId;
+        // Dislike
+        query =
+            'UPDATE treatment_exercise AS te '+
+            'INNER JOIN user_treatment AS ut ON te.treatment_id = ut.treatment_id '+
+            'INNER JOIN treatment AS t ON ut.treatment_id = t.treatment_id '+
+            'INNER JOIN exercise AS e ON te.exercise_id = e.exercise_id '+
+            'SET te.rating_user = -1, e.rating = rating-1 '+
+            'WHERE ut.user_id = ' + user_id + ' '+
+            'AND te.exercise_id = '+ exerciseId + ' '+
+            'AND t.end_date >= "' + utils.getCurrentDate() +'" '+
+            'AND t.start_date <= "' + utils.getCurrentDate() +'" ';
     }
 
 

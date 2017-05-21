@@ -40,3 +40,26 @@ utils.prototype.randomString = function (length, chars) {
     for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
     return result;
 };
+
+/**
+ * Function for returning the current date.
+ * @returns {Date}
+ */
+utils.prototype.getCurrentDate = function(){
+    var currentDate = new Date();
+    var dd = currentDate.getDate();
+    var mm = currentDate.getMonth() + 1; // January is zero, so + 1
+    var yyyy = currentDate.getFullYear();
+
+    // If the days / months are smaller than 10, we want to put a 0 before it. So for example 2017-09-09 instead of 2017-9-9
+    if(dd < 10) {
+        dd = '0' + dd
+    }
+
+    if(mm < 10) {
+        mm = '0' + mm
+    }
+
+    currentDate = yyyy + '-' + mm + '-' + dd;
+    return currentDate;
+}
