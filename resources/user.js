@@ -70,6 +70,26 @@ router.put('/change', function (req, res) {
     })
 });
 
+router.post('/complaint/add', function (req, res) {
+    var user_id = req.body.user_id;
+    var complaint_id = req.body.complaint_id;
+
+    console.log("user id: " + user_id);
+
+    var query = 'INSERT INTO user_complaint (user_id, complaint_id) VALUES ("' + user_id + '", "' + complaint_id + '");';
+
+    connection.query(query, function (err) {
+        if (err) {
+            console.log(err.message);
+            // utils.error(409, 'Already exists', res);
+            res.status(400).send("Foute aanvraag");
+            return;
+        }
+
+        res.status(201).send("Klacht toegevoegd");
+    })
+});
+
 router.post('/login', function (req, res) {
     var email = req.body.email;
     var password = req.body.password;

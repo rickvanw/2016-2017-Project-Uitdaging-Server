@@ -33,18 +33,17 @@ router.post('/add', function (req, res) {
             return;
         }
 
+        // TODO generate-treatment.js
         res.status(201).send("Behandelplan gecreëerd");
     })
 });
 
 router.get('/exercises-day', function (req, res) {
-    // TODO token
     var user_id = req.decoded.user_id;
     var date = req.header('day');
     console.log(JSON.stringify(req.headers));
     console.log("Date: " + date);
 
-    // TODO token check
     var query = 'SELECT e.*, te.rating_user, te.done FROM exercise AS e '+
     'INNER JOIN treatment_exercise AS te ON e.exercise_id = te.exercise_id '+
     'INNER JOIN user_treatment AS ut ON te.treatment_id = ut.treatment_id '+
