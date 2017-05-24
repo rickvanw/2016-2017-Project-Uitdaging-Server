@@ -1,8 +1,15 @@
+/**
+ * All API calls for user.
+ *
+ * Created by rickv, maurice_2 on 15-5-2017.
+ */
 var express = require('express');
 var request = require('request');
 var router = express.Router();
 
 module.exports = router;
+
+var fs = require('fs');
 
 var jwt = require('jsonwebtoken');
 var connection = require('./connection.js');
@@ -71,23 +78,30 @@ router.put('/change', function (req, res) {
 });
 
 router.post('/complaint/add', function (req, res) {
-    var user_id = req.body.user_id;
-    var complaint_id = req.body.complaint_id;
+    console.log("ADD complaint");
+    var user_id = req.decoded.user_id;
+    var complaint_ids = JSON.parse(req.body.complaint_ids);
 
     console.log("user id: " + user_id);
 
-    var query = 'INSERT INTO user_complaint (user_id, complaint_id) VALUES ("' + user_id + '", "' + complaint_id + '");';
+    for(i = 0; i < complaint_ids.length; i++) {
+        var complaint_id = complaint_ids[i];
+        console.log("complaint id: " + complaint_id);
 
-    connection.query(query, function (err) {
-        if (err) {
-            console.log(err.message);
-            // utils.error(409, 'Already exists', res);
-            res.status(400).send("Foute aanvraag");
-            return;
-        }
+        var query = 'INSERT INTO user_complaint (user_id, complaint_id) VALUES ("' + user_id + '", "' + complaint_id + '");';
 
-        res.status(201).send("Klacht toegevoegd");
-    })
+        connection.query(query, function (err) {
+            if (err) {
+                console.log(err.message);
+                // utils.error(409, 'Already exists', res);
+                res.status(400).send("Foute aanvraag");
+                return;
+            }
+
+            console.log("user_complaint successfully added");
+            res.status(201).send();
+        })
+    }
 });
 
 router.post('/login', function (req, res) {
