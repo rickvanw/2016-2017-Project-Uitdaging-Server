@@ -30,10 +30,11 @@ router.get('', function (req, res) {
 
 // Add instructor to module_year
 router.post('/add', function (req, res) {
-    var complaintName = req.body.name;
+    var user_id = req.decoded.user_id;
+    var complaint_id = req.body.complaint_id;
 
     //var query = 'insert into complaint(name) values()';
-    var query = 'INSERT INTO complaint(name) VALUES ("'+complaintName+'")';
+    var query = 'INSERT INTO user_complaint(user_id, complaint_id) VALUES ("' + user_id + ', ' + complaint_id + '")';
 
     connection.query(query, function (err) {
         if (err) {
