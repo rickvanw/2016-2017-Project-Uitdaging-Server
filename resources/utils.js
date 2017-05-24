@@ -62,4 +62,20 @@ utils.prototype.getCurrentDate = function(){
 
     currentDate = yyyy + '-' + mm + '-' + dd;
     return currentDate;
-}
+};
+
+/**
+ * Function for returning the current date with time.
+ * @returns {Date}
+ */
+utils.prototype.getCurrentDateTime = function(){
+    var currentDateTime = new Date();
+    var currentDate = this.getCurrentDate();
+
+    currentDateTime = currentDate + " "
+    + currentDateTime.getHours() + ":"
+    + currentDateTime.getMinutes() + ":"
+    + currentDateTime.getSeconds();
+
+    return currentDateTime;
+};
