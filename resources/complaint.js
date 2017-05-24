@@ -27,3 +27,20 @@ router.get('', function (req, res) {
         res.status(200).json(result);
     });
 });
+
+// Add instructor to module_year
+router.post('/add', function (req, res) {
+    var complaintName = req.body.name;
+
+    //var query = 'insert into complaint(name) values()';
+    var query = 'INSERT INTO complaint(name) VALUES ("'+complaintName+'")';
+
+    connection.query(query, function (err) {
+        if (err) {
+            console.log(err.message);
+            utils.error(409, 'Already exists', res);
+            return;
+        }
+        res.status(201).send();
+    })
+});
