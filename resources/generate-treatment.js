@@ -22,15 +22,31 @@
 
 var connection = require('./connection.js');
 
-//var complaint_id = ;
+var user_id = 1;
 
-var query = 'SELECT * FROM exercise WHERE exercise_id = ';
+//1. selecteer exercises
+var query = 'SELECT exercise_id FROM complaint_exercise AS ce ' +
+    'INNER JOIN user_complaint uc ON uc.complaint_id = ce.complaint_id' +
+    'WHERE user_id = ' + user_id;
 
-connection.query(query, function (err) {
-    if(err) {
+connection.query(query, function (err, result) {
+    if (err) {
         console.log("Error: " + err);
     }
 
+    console.log(result);
 
+    // var exercise_id;
+    //
+    // //2. loop door exercises
+    // for(exercise_id : query){
+    //     var query = 'INSERT INTO treatment_exercise (treatment_id, exercise_id, todo_datetime)' +
+    //         'VALUES ((SELECT treatment_id FROM user_treatment AS ut' +
+    //         'WHERE ut.user_id = 1' +
+    //         'INNER JOIN treatment AS t ON t.treatment_id = ut.treatment_id' +
+    //         'WHERE currentdate >= start_date AND currentdate <= end_date), exercise_id, getCurrentDate))'
+    //
+    //
+    // }
 
 });

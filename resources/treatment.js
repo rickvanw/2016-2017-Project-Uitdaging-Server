@@ -62,6 +62,40 @@ router.get('/exercises-day', function (req, res) {
     });
 });
 
+router.get('/generate-day-exercises', function (req, res) {
+    var user_id = req.decoded.user_id;
+    var current_date = utils.getCurrentDate();
+
+    var query = 'SELECT exercise_id FROM complaint_exercise AS ce ' +
+        'INNER JOIN user_complaint AS uc ON uc.complaint_id = ce.complaint_id ' +
+        'WHERE uc.user_id = ' + user_id;
+
+    connection.query(query, function (err, result) {
+        if (err) {
+            console.log("Error: " + err);
+        }
+
+        for(i = 0; i < result.length; i++){
+            var exercise_id = result[i].exercise_id;
+            var query = 'INSERT INTO treatment_exercise (treatment_id, exercise_id, todo_datetime) ' +
+                    'VALUES ((SELECT ut.treatment_id FROM user_treatment AS ut ' +
+                    'INNER JOIN treatment AS t ON t.treatment_id = ut.treatment_id ' +
+                    'WHERE "' + current_date + '" between t.start_date AND t.end_date ' +
+                    'AND ut.user_id = ' + user_id + '), ' + exercise_id + ', "' + utils.getCurrentDateTime() + '")';
+
+            connection.query(query, function (err, result) {
+                if (err) {
+                    console.log("Error: " + err);
+                }
+
+                console.log(result);
+                console.log("Succes!");
+            });
+        }
+    });
+});
+
+
 router.put('/exercise-done', function (req, res) {
     // TODO token
 
