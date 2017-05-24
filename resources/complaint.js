@@ -39,7 +39,6 @@ router.post('/add', function (req, res) {
     connection.query(query, function (err) {
         if (err) {
             console.log(err.message);
-            utils.error(409, 'Already exists', res);
             return;
         }
         res.status(201).send();
