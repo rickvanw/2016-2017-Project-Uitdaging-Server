@@ -17,7 +17,7 @@ var config = require('./config.js');
 var utils = require('./utils.js');
 
 /**
- * GET info of logged in user
+ * GET method for showing info of logged in user.
  */
 router.get('', function (req, res) {
 
@@ -33,6 +33,9 @@ router.get('', function (req, res) {
     });
 });
 
+/**
+ * POST method for creating a new user.
+ */
 router.post('/add', function (req, res) {
     var email = req.body.email;
     var password = req.body.password;
@@ -55,6 +58,9 @@ router.post('/add', function (req, res) {
     })
 });
 
+/**
+ * PUT method for changing personal data.
+ */
 router.put('/change', function (req, res) {
     var email = req.body.email;
     var password = req.body.password;
@@ -77,6 +83,9 @@ router.put('/change', function (req, res) {
     })
 });
 
+/**
+ * POST method for sending complaints which the user has selected for generating a new treatment.
+ */
 router.post('/complaint/add', function (req, res) {
     console.log("ADD complaint");
     var user_id = req.decoded.user_id;
@@ -104,6 +113,9 @@ router.post('/complaint/add', function (req, res) {
     }
 });
 
+/**
+ * POST method for login.
+ */
 router.post('/login', function (req, res) {
     var email = req.body.email;
     var password = req.body.password;

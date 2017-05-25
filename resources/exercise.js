@@ -45,11 +45,10 @@ router.put('/rate', function (req, res) {
         // Like
         query =
         'UPDATE treatment_exercise AS te '+
-        'INNER JOIN user_treatment AS ut ON te.treatment_id = ut.treatment_id '+
-        'INNER JOIN treatment AS t ON ut.treatment_id = t.treatment_id '+
+        'INNER JOIN treatment AS t ON te.treatment_id = t.treatment_id '+
         'INNER JOIN exercise AS e ON te.exercise_id = e.exercise_id '+
         'SET te.rating_user = 1, e.rating = rating+1 '+
-        'WHERE ut.user_id = ' + user_id + ' '+
+        'WHERE te.user_id = ' + user_id + ' '+
         'AND te.exercise_id = '+ exerciseId + ' '+
         'AND t.end_date >= "' + utils.getCurrentDate() +'" '+
         'AND t.start_date <= "' + utils.getCurrentDate() +'" ';
@@ -57,11 +56,10 @@ router.put('/rate', function (req, res) {
         // Dislike
         query =
             'UPDATE treatment_exercise AS te '+
-            'INNER JOIN user_treatment AS ut ON te.treatment_id = ut.treatment_id '+
-            'INNER JOIN treatment AS t ON ut.treatment_id = t.treatment_id '+
+            'INNER JOIN treatment AS t ON te.treatment_id = t.treatment_id '+
             'INNER JOIN exercise AS e ON te.exercise_id = e.exercise_id '+
             'SET te.rating_user = -1, e.rating = rating-1 '+
-            'WHERE ut.user_id = ' + user_id + ' '+
+            'WHERE te.user_id = ' + user_id + ' '+
             'AND te.exercise_id = '+ exerciseId + ' '+
             'AND t.end_date >= "' + utils.getCurrentDate() +'" '+
             'AND t.start_date <= "' + utils.getCurrentDate() +'" ';
