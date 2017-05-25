@@ -91,13 +91,16 @@ router.post('/complaint/add', function (req, res) {
     var user_id = req.decoded.user_id;
     var complaint_ids = JSON.parse(req.body.complaint_ids);
 
+    console.log("----- start posting complaints");
     console.log("user id: " + user_id);
 
     for(i = 0; i < complaint_ids.length; i++) {
         var complaint_id = complaint_ids[i];
         console.log("complaint id: " + complaint_id);
 
-        var query = 'INSERT INTO user_complaint (user_id, complaint_id) VALUES ("' + user_id + '", "' + complaint_id + '");';
+        // TESTING
+        // var query = 'INSERT INTO user_complaint (user_id, complaint_id) VALUES ("' + user_id + '", "' + complaint_id + '");';
+        var query = 'INSERT INTO test_user_complaint (user_id, complaint_id) VALUES ("' + user_id + '", "' + complaint_id + '");';
 
         connection.query(query, function (err) {
             if (err) {
@@ -111,6 +114,8 @@ router.post('/complaint/add', function (req, res) {
             res.status(201).send();
         })
     }
+    console.log("----- end posting complaints");
+    console.log("");
 });
 
 /**

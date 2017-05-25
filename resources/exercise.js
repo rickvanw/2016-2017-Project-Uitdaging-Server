@@ -38,9 +38,7 @@ router.put('/rate', function (req, res) {
     var query="";
 
     // TODO user can only rate one exercise once
-    //var userId = req.decoded.user_id;
-
-
+    
     if (rating==1){
         // Like
         query =
@@ -52,7 +50,7 @@ router.put('/rate', function (req, res) {
         'AND te.exercise_id = '+ exerciseId + ' '+
         'AND t.end_date >= "' + utils.getCurrentDate() +'" '+
         'AND t.start_date <= "' + utils.getCurrentDate() +'" ';
-    }else{
+    } else {
         // Dislike
         query =
             'UPDATE treatment_exercise AS te '+
@@ -64,7 +62,6 @@ router.put('/rate', function (req, res) {
             'AND t.end_date >= "' + utils.getCurrentDate() +'" '+
             'AND t.start_date <= "' + utils.getCurrentDate() +'" ';
     }
-
 
     connection.query(query, function (err, rating) {
         if (err) {
