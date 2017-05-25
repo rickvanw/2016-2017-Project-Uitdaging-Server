@@ -15,8 +15,11 @@ var connection = require('./connection.js');
 var config = require('./config.js');
 var utils = require('./utils.js');
 
+/**
+ * Post method for creating a new treatment.
+ */
 router.post('/add', function (req, res) {
-    // TODO Als er al een behandelplan bestaat, mag er niet een nieuwe worden gegenereerd!
+    // TODO Als er al een behandelplan bestaat voor de user, mag er niet een nieuwe worden gegenereerd!
     console.log("JOEgegergrRR");
     var user_id = req.decoded.user_id;
     var start_date = utils.getCurrentDate();
@@ -41,10 +44,13 @@ router.post('/add', function (req, res) {
     })
 });
 
+/**
+ * Get method for showing all exercises of a certain day.
+ */
 router.get('/exercises-day', function (req, res) {
     var user_id = req.decoded.user_id;
     var date = req.header('day');
-    console.log(JSON.stringify(req.headers));
+
     console.log("user id: " + user_id);
     console.log("Date: " + date);
 
@@ -54,8 +60,7 @@ router.get('/exercises-day', function (req, res) {
     'WHERE t.user_id = ' + user_id + ' '+
     'AND t.end_date >= "' + utils.getCurrentDate() + '" '+
     'AND t.start_date <= "' + utils.getCurrentDate() + '" ' +
-        // +'" '+
-    'AND te.todo_datetime = "' + date +'" ';
+    'AND te.todo_date = "' + date + '"';
 
     connection.query(query, function (err, result) {
         if (err){
@@ -67,9 +72,16 @@ router.get('/exercises-day', function (req, res) {
     });
 });
 
-router.get('/generate-exercises', function(req, res) {
+/**
+ * Method for generating exercises.
+ */
+router.post('/generate-exercises', function(req, res) {
+    // TODO: exercises moeten worden gegenereerd met een todo_time om het uur!
     var user_id = req.decoded.user_id;
     var current_date = utils.getCurrentDate();
+
+    console.log("** user_id: " + user_id);
+    console.log("** current_date: " + current_date);
 
     var query = 'SELECT exercise_id FROM complaint_exercise AS ce ' +
         'INNER JOIN user_complaint AS uc ON uc.complaint_id = ce.complaint_id ' +
@@ -82,35 +94,35 @@ router.get('/generate-exercises', function(req, res) {
 
         for(i = 0; i < result.length; i++){
             var exercise_id = result[i].exercise_id;
-            console.log("exercise_id: " + exercise_id);
-            var query = 'INSERT INTO treatment_exercise (treatment_id, exercise_id, todo_datetime) ' +
+            console.log("\texercise_id: " + exercise_id);
+            var query = 'INSERT INTO treatment_exercise (treatment_id, exercise_id, todo_date, todo_time) ' +
                     'VALUES ((SELECT te.treatment_id FROM treatment AS te ' +
                     'WHERE "' + current_date + '" between te.start_date AND te.end_date ' +
-                    'AND te.user_id = ' + user_id + '), ' + exercise_id + ', "' + utils.getCurrentDateTime() + '")';
+                    'AND te.user_id = ' + user_id + '), ' + exercise_id + ', "' + utils.getCurrentDate() + '", "' + utils.getCurrentTime() + '")';
 
             connection.query(query, function (err, result) {
                 if (err) {
                     console.log("Error: " + err);
                 }
 
-                console.log(result);
                 console.log("Succes!");
+                response.status(200).send();
             });
         }
     });
 });
 
-
+/**
+ * PUT method for marking exercises as done or undone.
+ */
 router.put('/exercise-done', function (req, res) {
-    // TODO token
-
     var exerciseId = req.body.exerciseId;
     var done = req.body.isDone;
     var user_id = req.decoded.user_id;
 
-    console.log("exerciseId: " + exerciseId);
-    console.log("done: " + done);
-    console.log("user_id: " + user_id);
+    console.log("** user_id: " + user_id);
+    console.log("** exerciseId: " + exerciseId);
+    console.log("** done: " + done);
 
     // TODO token check
     var query;
@@ -140,7 +152,7 @@ router.put('/exercise-done', function (req, res) {
             return;
         }
 
-        console.log("succes: " + done);
+        console.log("succes!");
         res.status(200).send(done);
     });
 });

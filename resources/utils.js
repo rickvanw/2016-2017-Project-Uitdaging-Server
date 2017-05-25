@@ -65,6 +65,21 @@ utils.prototype.getCurrentDate = function(){
 };
 
 /**
+ * Function for returning the current time.
+ * @returns {Date}
+ */
+utils.prototype.getCurrentTime = function(){
+    var currentTime = new Date();
+    var hh = currentTime.getHours();
+    var mm = currentTime.getMinutes();
+    var ss = currentTime.getSeconds();
+
+    currentTime = hh + ":" + mm + ":" + ss;
+
+    return currentTime;
+};
+
+/**
  * Function for returning the current date with time.
  * @returns {Date}
  */
