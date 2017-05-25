@@ -44,14 +44,13 @@ router.get('/exercises-day', function (req, res) {
     console.log(JSON.stringify(req.headers));
     console.log("Date: " + date);
 
-    var query = 'SELECT e.*, te.rating_user, te.done FROM exercise AS e '+
+    var query = 'SELECT e.*, te.rating_user, te.done, te.treatment_exercise_id FROM exercise AS e '+
     'INNER JOIN treatment_exercise AS te ON e.exercise_id = te.exercise_id '+
-    'INNER JOIN user_treatment AS ut ON te.treatment_id = ut.treatment_id '+
-    'INNER JOIN treatment AS t ON ut.treatment_id = t.treatment_id '+
-    'WHERE ut.user_id = '+ user_id + ' '+
+    'INNER JOIN treatment AS t ON te.treatment_id = t.treatment_id '+
+    'WHERE t.user_id = '+ user_id + ' '+
     'AND t.end_date >= "' + utils.getCurrentDate() +'" '+
     'AND t.start_date <= "' + utils.getCurrentDate() +'" '+
-    'AND todo_datetime = "' + date +'" ';
+    'AND todo_date = "' + date +'" ';
 
     connection.query(query, function (err, result) {
         if (err){
@@ -99,7 +98,7 @@ router.get('/generate-day-exercises', function (req, res) {
 router.put('/exercise-done', function (req, res) {
     // TODO token
 
-    var exerciseId = req.body.exerciseId;
+    var treatment_exercise_id = req.body.treatment_exercise_id;
     var done = req.body.done;
     var user_id = req.decoded.user_id;
 
@@ -107,20 +106,18 @@ router.put('/exercise-done', function (req, res) {
     var query;
     if (done == 1) {
         query = 'UPDATE treatment_exercise AS te '+
-            'INNER JOIN user_treatment AS ut ON te.treatment_id = ut.treatment_id '+
-            'INNER JOIN treatment AS t ON ut.treatment_id = t.treatment_id '+
+            'INNER JOIN treatment AS t ON te.treatment_id = t.treatment_id '+
             'SET te.done = 1 '+
-            'WHERE ut.user_id = '+ user_id +' '+
-            'AND te.exercise_id = '+ exerciseId + ' '+
+            'WHERE t.user_id = '+ user_id +' '+
+            'AND te.treatment_exercise_id = '+ treatment_exercise_id + ' '+
             'AND t.end_date >= "' + utils.getCurrentDate() +'" '+
             'AND t.start_date <= "' + utils.getCurrentDate() +'" ';
     }else{
         query = 'UPDATE treatment_exercise AS te '+
-            'INNER JOIN user_treatment AS ut ON te.treatment_id = ut.treatment_id '+
-            'INNER JOIN treatment AS t ON ut.treatment_id = t.treatment_id '+
+            'INNER JOIN treatment AS t ON te.treatment_id = t.treatment_id '+
             'SET te.done = -1 '+
-            'WHERE ut.user_id = '+ user_id +' '+
-            'AND te.exercise_id = '+ exerciseId + ' '+
+            'WHERE t.user_id = '+ user_id +' '+
+            'AND te.treatment_exercise_id = '+ treatment_exercise_id + ' '+
             'AND t.end_date >= "' + utils.getCurrentDate() +'" '+
             'AND t.start_date <= "' + utils.getCurrentDate() +'" ';
     }
