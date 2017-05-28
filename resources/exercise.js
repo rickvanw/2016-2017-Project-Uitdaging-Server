@@ -66,7 +66,6 @@ router.put('/rate', function (req, res) {
             'AND t.start_date <= "' + utils.getCurrentDate() +'" ';
     }
 
-
     connection.query(query, function (err, rating) {
         if (err) {
             console.log(err.message);

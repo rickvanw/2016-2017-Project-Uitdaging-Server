@@ -1,8 +1,15 @@
+/**
+ * All API calls for user.
+ *
+ * Created by rickv, maurice_2 on 15-5-2017.
+ */
 var express = require('express');
 var request = require('request');
 var router = express.Router();
 
 module.exports = router;
+
+var fs = require('fs');
 
 var jwt = require('jsonwebtoken');
 var connection = require('./connection.js');
@@ -10,7 +17,7 @@ var config = require('./config.js');
 var utils = require('./utils.js');
 
 /**
- * GET info of logged in user
+ * GET method for showing info of logged in user.
  */
 router.get('', function (req, res) {
 
@@ -26,6 +33,9 @@ router.get('', function (req, res) {
     });
 });
 
+/**
+ * POST method for creating a new user.
+ */
 router.post('/add', function (req, res) {
     var email = req.body.email;
     var password = req.body.password;
@@ -48,6 +58,9 @@ router.post('/add', function (req, res) {
     })
 });
 
+/**
+ * PUT method for changing personal data.
+ */
 router.put('/change', function (req, res) {
     var email = req.body.email;
     var password = req.body.password;
@@ -70,26 +83,44 @@ router.put('/change', function (req, res) {
     })
 });
 
+/**
+ * POST method for sending complaints which the user has selected for generating a new treatment.
+ */
 router.post('/complaint/add', function (req, res) {
-    var user_id = req.body.user_id;
-    var complaint_id = req.body.complaint_id;
+    console.log("ADD complaint");
+    var user_id = req.decoded.user_id;
+    var complaint_ids = JSON.parse(req.body.complaint_ids);
 
+    console.log("----- start posting complaints");
     console.log("user id: " + user_id);
 
-    var query = 'INSERT INTO user_complaint (user_id, complaint_id) VALUES ("' + user_id + '", "' + complaint_id + '");';
+    for(i = 0; i < complaint_ids.length; i++) {
+        var complaint_id = complaint_ids[i];
+        console.log("complaint id: " + complaint_id);
 
-    connection.query(query, function (err) {
-        if (err) {
-            console.log(err.message);
-            // utils.error(409, 'Already exists', res);
-            res.status(400).send("Foute aanvraag");
-            return;
-        }
+        // TESTING
+        // var query = 'INSERT INTO user_complaint (user_id, complaint_id) VALUES ("' + user_id + '", "' + complaint_id + '");';
+        var query = 'INSERT INTO test_user_complaint (user_id, complaint_id) VALUES ("' + user_id + '", "' + complaint_id + '");';
 
-        res.status(201).send("Klacht toegevoegd");
-    })
+        connection.query(query, function (err) {
+            if (err) {
+                console.log(err.message);
+                // utils.error(409, 'Already exists', res);
+                res.status(400).send("Foute aanvraag");
+                return;
+            }
+
+            console.log("user_complaint successfully added");
+            res.status(201).send();
+        })
+    }
+    console.log("----- end posting complaints");
+    console.log("");
 });
 
+/**
+ * POST method for login.
+ */
 router.post('/login', function (req, res) {
     var email = req.body.email;
     var password = req.body.password;

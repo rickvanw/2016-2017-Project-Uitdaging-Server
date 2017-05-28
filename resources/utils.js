@@ -65,6 +65,21 @@ utils.prototype.getCurrentDate = function(){
 };
 
 /**
+ * Function for returning the current time.
+ * @returns {Date}
+ */
+utils.prototype.getCurrentTime = function(){
+    var currentTime = new Date();
+    var hh = currentTime.getHours();
+    var mm = currentTime.getMinutes();
+    var ss = currentTime.getSeconds();
+
+    currentTime = hh + ":" + mm + ":" + ss;
+
+    return currentTime;
+};
+
+/**
  * Function for returning the current date with time.
  * @returns {Date}
  */
@@ -79,3 +94,32 @@ utils.prototype.getCurrentDateTime = function(){
 
     return currentDateTime;
 };
+
+/**
+ * Function for returning the end date of a treatment. The end date is 6 weeks (42 days) after the start date.
+ * @returns {Date}
+ */
+utils.prototype.getEndDate = function(){
+    var endDate = new Date();
+    addDays(endDate, 42);
+    var dd = endDate.getDate(); // End date is 6 weeks after start date
+    var mm = endDate.getMonth() + 1; // January is zero, so + 1
+    var yyyy = endDate.getFullYear();
+
+    // If the days / months are smaller than 10, we want to put a 0 before it. So for example 2017-09-09 instead of 2017-9-9
+    if(dd < 10) {
+        dd = '0' + dd
+    }
+
+    if(mm < 10) {
+        mm = '0' + mm
+    }
+
+    endDate = yyyy + '-' + mm + '-' + dd;
+
+    return endDate;
+};
+
+function addDays(date, numOfDays) {
+    date.setTime(date.getTime() + (86400000 * numOfDays));
+}
