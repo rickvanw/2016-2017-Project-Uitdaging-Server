@@ -12,7 +12,7 @@ module.exports = new utils();
  */
 utils.prototype.error = function (httpcode, message, res) {
     res.status(httpcode);
-    res.type('json');
+    res.send(message);
 };
 
 utils.prototype.createQueryString = function (settings, query, query_args, append) {

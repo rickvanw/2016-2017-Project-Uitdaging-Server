@@ -40,6 +40,7 @@ router.put('/rate', function (req, res) {
     // TODO user can only rate one exercise once
     //var userId = req.decoded.user_id;
 
+    console.log("RATING: "+rating);
 
     if (rating==1){
         // Like

@@ -18,7 +18,12 @@
  * 6. Op de behandelplan pagina verschijnen de random exercises voor die dag
  */
 
-
+/** klachten uit db
+ *  behandelplan voor huidige gebruiker nu
+ *  opdrachten bij de klachten ophalen, random
+ *  aantal opdrachten totdat je uitlogd, dus
+ *  tijd per opdracht in database zetten
+ */
 
 var connection = require('./connection.js');
 

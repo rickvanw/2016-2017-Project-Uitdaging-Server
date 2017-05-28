@@ -101,6 +101,7 @@ router.post('/login', function (req, res) {
         }
 
         if (result[0] === undefined) {
+            console.log("Wrong name");
             utils.error(401, 'User with given username not found', res);
         }
         else if(result[0].password === password) {
@@ -111,7 +112,9 @@ router.post('/login', function (req, res) {
         }
         else {
             // Incorrect password
+            console.log("Wrong pass");
             utils.error(401, 'Incorrect password', res);
+
         }
     });
 });

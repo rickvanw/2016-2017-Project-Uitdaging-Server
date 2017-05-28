@@ -61,6 +61,29 @@ router.get('/exercises-day', function (req, res) {
     });
 });
 
+//TODO per tijdstip maken
+router.get('/exercise-now', function (req, res) {
+    var user_id = req.decoded.user_id;
+    console.log(JSON.stringify(req.headers));
+
+    var query = 'SELECT e.*, te.rating_user, te.done, te.treatment_exercise_id FROM exercise AS e '+
+        'INNER JOIN treatment_exercise AS te ON e.exercise_id = te.exercise_id '+
+        'INNER JOIN treatment AS t ON te.treatment_id = t.treatment_id '+
+        'WHERE t.user_id = '+ user_id + ' '+
+        'AND t.end_date >= "' + utils.getCurrentDate() +'" '+
+        'AND t.start_date <= "' + utils.getCurrentDate() +'" '+
+        'AND todo_date = "'+ "2017-05-21"+'" ' +
+        'LIMIT 1';
+
+    connection.query(query, function (err, result) {
+        if (err){
+            res.status(404).send("Niet gevonden");
+            return;
+        }
+        res.status(200).json(result);
+    });
+});
+
 router.get('/generate-day-exercises', function (req, res) {
     var user_id = req.decoded.user_id;
     var current_date = utils.getCurrentDate();
