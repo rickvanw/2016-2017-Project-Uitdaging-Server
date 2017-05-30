@@ -87,35 +87,60 @@ router.put('/change', function (req, res) {
  * POST method for sending complaints which the user has selected for generating a new treatment.
  */
 router.post('/complaint/add', function (req, res) {
-    console.log("ADD complaint");
     var user_id = req.decoded.user_id;
+    var query = "";
     var complaint_ids = JSON.parse(req.body.complaint_ids);
 
-    console.log("----- start posting complaints");
-    console.log("user id: " + user_id);
+    console.log();
+    console.log();
+    console.log("**************************** CHECK FOR POSTING COMPLAINTS **********************************");
+    console.log("** user_id: " + user_id);
 
-    for(i = 0; i < complaint_ids.length; i++) {
-        var complaint_id = complaint_ids[i];
-        console.log("complaint id: " + complaint_id);
+    query = 'SELECT treatment_id FROM test_treatment WHERE user_id = ' + user_id;
 
-        // TESTING
-        // var query = 'INSERT INTO user_complaint (user_id, complaint_id) VALUES ("' + user_id + '", "' + complaint_id + '");';
-        var query = 'INSERT INTO test_user_complaint (user_id, complaint_id) VALUES ("' + user_id + '", "' + complaint_id + '");';
+    connection.query(query, function (err, result) {
+        if (err) {
+            console.log("Error: " + err);
+        }
 
-        connection.query(query, function (err) {
-            if (err) {
-                console.log(err.message);
-                // utils.error(409, 'Already exists', res);
-                res.status(400).send("Foute aanvraag");
-                return;
-            }
+        var treatment_id;
+        for (i = 0; i < result.length; i++) {
+            treatment_id = result[i].treatment_id;
+        }
+        console.log("** treatment_id: " + treatment_id);
 
-            console.log("user_complaint successfully added");
-            res.status(201).send();
-        })
-    }
-    console.log("----- end posting complaints");
-    console.log("");
+        if (treatment_id !== undefined) {
+            console.log("Treatment earlier defined for user with id " + user_id);
+            res.status(406).send("Treatment already defined!");
+        } else {
+            console.log("** Treatment not earlier defined, so allowed to post complaints!");
+            console.log();
+            console.log("----- start posting complaints");
+            (function () {
+                for (i = 0; i < complaint_ids.length; i++) {
+                    var complaint_id = complaint_ids[i];
+                    console.log("complaint " + (i + 1) + " with complaint id: " + complaint_id);
+
+                    // TESTING
+                    // var query = 'INSERT INTO user_complaint (user_id, complaint_id) VALUES ("' + user_id + '", "' + complaint_id + '");';
+                    query = 'INSERT INTO test_user_complaint (user_id, complaint_id) VALUES ("' + user_id + '", "' + complaint_id + '");';
+
+                    connection.query(query, function (err, i) {
+                        if (err) {
+                            console.log(err.message);
+                            // utils.error(409, 'Already exists', res);
+                            res.status(400).send("Bad request");
+                            return;
+                        }
+
+                        res.status(201).send();
+                    });
+                }
+            })();
+            console.log("----- end posting complaints successfully!");
+            console.log();
+        }
+    });
 });
 
 /**
@@ -149,3 +174,26 @@ router.post('/login', function (req, res) {
         }
     });
 });
+
+// /**
+//  * Returns true if treatment_id !== 0
+//  * @param user_id
+//  */
+// function findTreatment(user_id) {
+//     console.log("meegegeven user_id: " + user_id);
+//     var query = 'SELECT treatment_id FROM test_treatment WHERE user_id = ' + user_id;
+//
+//     connection.query(query, function (err, result) {
+//         if (err) {
+//             console.log("Error: " + err);
+//         }
+//
+//         var treatment_id;
+//
+//         for(i = 0; i < result.length; i++) {
+//             treatment_id = result[i].treatment_id;
+//         }
+//         console.log("****** treatment_id: " + treatment_id);
+//         return treatment_id !== 0;
+//     });
+// }
