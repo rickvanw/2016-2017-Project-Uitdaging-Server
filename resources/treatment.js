@@ -145,7 +145,7 @@ router.put('/exercise-done', function (req, res) {
     var user_id = req.decoded.user_id;
 
     console.log("** user_id: " + user_id);
-    console.log("** exerciseId: " + exerciseId);
+    console.log("** treatment_exercise_id: " + treatment_exercise_id);
     console.log("** done: " + done);
 
     // TODO token check
