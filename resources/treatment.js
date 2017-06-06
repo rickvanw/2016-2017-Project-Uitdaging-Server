@@ -18,7 +18,7 @@ var utils = require('./utils.js');
 /**
  * Get method for getting the current treatment for a user
  */
-router.get('/', function (req, res) {
+router.get('/to-evaluate', function (req, res) {
     var user_id = req.decoded.user_id;
 
     console.log("user id: " + user_id);
