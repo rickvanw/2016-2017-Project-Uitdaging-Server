@@ -16,6 +16,29 @@ var config = require('./config.js');
 var utils = require('./utils.js');
 
 /**
+ * Get method for getting the current treatment for a user
+ */
+router.get('/', function (req, res) {
+    var user_id = req.decoded.user_id;
+
+    console.log("user id: " + user_id);
+
+    var query = 'SELECT * FROM treatment ' +
+        'WHERE user_id ='+ user_id + ' '+
+        'AND done = 0 ' +
+        'AND end_date < "' + utils.getCurrentDate() +'" ';
+
+
+    connection.query(query, function (err, result) {
+        if (err){
+            res.status(404).send("Not found");
+            return;
+        }
+        res.status(200).json(result);
+    });
+});
+
+/**
  * Post method for creating a new treatment.
  */
 router.post('/add', function (req, res) {
