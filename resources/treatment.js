@@ -32,7 +32,7 @@ router.post('/add', function (req, res) {
 
     // TESTING
     // var query = 'INSERT INTO treatment (user_id, start_date, end_date) VALUES ("' + user_id + '", "' + start_date + '", "' + end_date + '");';
-    var query = 'INSERT INTO test_treatment (user_id, start_date, end_date) VALUES ("' + user_id + '", "' + start_date + '", "' + end_date + '");';
+    var query = 'INSERT INTO treatment (user_id, start_date, end_date) VALUES ("' + user_id + '", "' + start_date + '", "' + end_date + '");';
 
     connection.query(query, function (err) {
         if (err) {
@@ -172,7 +172,7 @@ function checkForExerciseGeneration(req, res) {
     console.log("** current_date: " + current_date);
 
     // check of er nog geen exercises zijn gegenereerd voor deze dag
-    query = 'SELECT treatment_exercise_id FROM test_treatment_exercise WHERE todo_date = ' + current_date;
+    query = 'SELECT treatment_exercise_id FROM treatment_exercise WHERE todo_date = ' + current_date;
 
     connection.query(query, function (err, result) {
         if (err) {
@@ -201,17 +201,12 @@ function checkForExerciseGeneration(req, res) {
 function generateExercises(user_id, current_date) {
     var exercise_id;
 
-// TESTING
-    // var query = 'SELECT exercise_id FROM complaint_exercise AS ce ' +
-    //     'INNER JOIN user_complaint AS uc ON uc.complaint_id = ce.complaint_id ' +
-    //     'WHERE uc.user_id = ' + user_id;
-
     console.log("user_id: " + user_id);
     console.log("current_date: " + current_date);
 
     // Onderstaande query selecteert alle oefeningen die bij de klachten van een gebruiker horen
     var query = 'SELECT exercise_id FROM complaint_exercise AS ce ' +
-        'INNER JOIN test_user_complaint AS uc ON uc.complaint_id = ce.complaint_id ' +
+        'INNER JOIN user_complaint AS uc ON uc.complaint_id = ce.complaint_id ' +
         'WHERE uc.user_id = ' + user_id;
 
     connection.query(query, function (err, result) {
@@ -289,18 +284,12 @@ function generateExercises(user_id, current_date) {
 
                         exercise_id = result[i].exercise_id;
                         console.log("-->\tINSERT exercise " + (i + 1) + " with exercise_id: " + exercise_id);
-                        console.log("--------------------------------------------------")
-
-                        // TESTING
-                        // var query = 'INSERT INTO treatment_exercise (treatment_id, exercise_id, todo_date, todo_time) ' +
-                        //     'VALUES ((SELECT te.treatment_id FROM treatment AS te ' +
-                        //     'WHERE "' + current_date + '" between te.start_date AND te.end_date ' +
-                        //     'AND te.user_id = ' + user_id + '), ' + exercise_id + ', "' + utils.getCurrentDate() + '", "' + utils.getCurrentTime() + '")';
+                        console.log("--------------------------------------------------");
 
                         // Onderstaande query voegt aan de koppeltabel treatment_exercise het betreffende behandelplan toe van de gebruiker,
                         // een random gegenereerde oefening, en de to do datum & to do tijd vd oefening
-                        query = 'INSERT INTO test_treatment_exercise (treatment_id, exercise_id, todo_date, todo_time) ' +
-                            'VALUES ((SELECT te.treatment_id FROM test_treatment AS te ' +
+                        query = 'INSERT INTO treatment_exercise (treatment_id, exercise_id, todo_date, todo_time) ' +
+                            'VALUES ((SELECT te.treatment_id FROM treatment AS te ' +
                             'WHERE "' + current_date + '" between te.start_date AND te.end_date ' +
                             'AND te.user_id = ' + user_id + '), ' + exercise_id + ', "' + utils.getCurrentDate() + '", "' + printTime + '")';
 
@@ -317,9 +306,3 @@ function generateExercises(user_id, current_date) {
         console.log();
     });
 }
-
-// router.get('/test-generating', function (req, res) {
-//
-//
-//
-// });

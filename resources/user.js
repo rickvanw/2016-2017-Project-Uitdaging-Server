@@ -96,7 +96,7 @@ router.post('/complaint/add', function (req, res) {
     console.log("**************************** CHECK FOR POSTING COMPLAINTS **********************************");
     console.log("** user_id: " + user_id);
 
-    query = 'SELECT treatment_id FROM test_treatment WHERE user_id = ' + user_id;
+    query = 'SELECT treatment_id FROM treatment WHERE user_id = ' + user_id;
 
     connection.query(query, function (err, result) {
         if (err) {
