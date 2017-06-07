@@ -23,13 +23,11 @@ router.get('', function(req, res){
 });
 
 router.post('/add', function (req, res) {
-    // TODO token
-    var user_id = req.body.userId;
-    var item1 = req.body.item1;
-    var item2 = req.body.item2;
+    console.log("hier komt hij");
+    var user_id = req.decoded.userId;
+    var image_url = JSON.parse(req.body.image_url);
 
-    // TODO token check
-    var query = 'INSERT INTO evaluation (user_id, item1, item2) VALUES ("' + user_id + '", "' + item1 + '", "' + item2 + '");';
+    var query = 'INSERT INTO evaluation (user_id, image_url) VALUES ("' + user_id + '", "' + image_url + '");';
 
     connection.query(query, function (err) {
         if (err) {

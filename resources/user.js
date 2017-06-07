@@ -42,8 +42,6 @@ router.post('/add', function (req, res) {
     var first_name = req.body.first_name;
     var last_name = req.body.last_name;
 
-
-    //var query = 'insert into complaint(name) values()';
     var query = 'INSERT INTO user(email, password, first_name, last_name) VALUES ("'+email+'","'+password+'","'+first_name+'","'+last_name+'")';
 
     console.log(query);
@@ -96,7 +94,7 @@ router.post('/complaint/add', function (req, res) {
     console.log("**************************** CHECK FOR POSTING COMPLAINTS **********************************");
     console.log("** user_id: " + user_id);
 
-    query = 'SELECT treatment_id FROM test_treatment WHERE user_id = ' + user_id;
+    query = 'SELECT treatment_id FROM treatment WHERE user_id = ' + user_id;
 
     connection.query(query, function (err, result) {
         if (err) {
@@ -104,6 +102,7 @@ router.post('/complaint/add', function (req, res) {
         }
 
         var treatment_id;
+
         for (i = 0; i < result.length; i++) {
             treatment_id = result[i].treatment_id;
         }
@@ -121,9 +120,7 @@ router.post('/complaint/add', function (req, res) {
                     var complaint_id = complaint_ids[i];
                     console.log("complaint " + (i + 1) + " with complaint id: " + complaint_id);
 
-                    // TESTING
-                    // var query = 'INSERT INTO user_complaint (user_id, complaint_id) VALUES ("' + user_id + '", "' + complaint_id + '");';
-                    query = 'INSERT INTO test_user_complaint (user_id, complaint_id) VALUES ("' + user_id + '", "' + complaint_id + '");';
+                    query = 'INSERT INTO user_complaint (user_id, complaint_id) VALUES ("' + user_id + '", "' + complaint_id + '");';
 
                     connection.query(query, function (err, i) {
                         if (err) {
@@ -174,26 +171,3 @@ router.post('/login', function (req, res) {
         }
     });
 });
-
-// /**
-//  * Returns true if treatment_id !== 0
-//  * @param user_id
-//  */
-// function findTreatment(user_id) {
-//     console.log("meegegeven user_id: " + user_id);
-//     var query = 'SELECT treatment_id FROM test_treatment WHERE user_id = ' + user_id;
-//
-//     connection.query(query, function (err, result) {
-//         if (err) {
-//             console.log("Error: " + err);
-//         }
-//
-//         var treatment_id;
-//
-//         for(i = 0; i < result.length; i++) {
-//             treatment_id = result[i].treatment_id;
-//         }
-//         console.log("****** treatment_id: " + treatment_id);
-//         return treatment_id !== 0;
-//     });
-// }
