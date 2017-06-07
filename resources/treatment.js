@@ -182,6 +182,7 @@ function checkForExerciseGeneration(req, res) {
     console.log("** user_id: " + user_id);
     console.log("** current_date: " + current_date);
 
+    //TODO user specifiek
     // check of er nog geen exercises zijn gegenereerd voor deze dag
     query = 'SELECT treatment_exercise_id FROM treatment_exercise WHERE todo_date = ' + '"' + current_date + '"';
 
@@ -255,7 +256,7 @@ function generateExercises(user_id, current_date, req, res) {
                     console.log("-- CURRENT TIME: " + newTime.getHours() + ":" + newTime.getMinutes());
 
                     // Check: time may not be greater than or equal to 16:30
-                    if((newTime.getHours() >= 20 && newTime.getMinutes() >= 30)){
+                    if((newTime.getHours() >= 24 && newTime.getMinutes() >= 30)){
                         console.log("-- Too late to generate :D");
                         console.log("--------------------------------------------------")
                     } else {
