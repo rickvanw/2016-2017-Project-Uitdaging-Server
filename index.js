@@ -74,10 +74,10 @@ app.listen(8000, function () {
 
 var complaint = require("./resources/complaint.js");
 app.use('/complaints', complaint);
-//
-// var evaluation = require("./resources/evaluation.js");
-// app.use('/evaluation', evaluation);
-//
+
+var evaluation = require("./resources/evaluation.js");
+app.use('/evaluation', evaluation);
+
 var exercise = require("./resources/exercise.js");
 app.use('/exercise', exercise);
 
