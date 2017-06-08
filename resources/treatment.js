@@ -205,7 +205,11 @@ function checkForExerciseGeneration(req, res) {
 
     //TODO user specifiek
     // check of er nog geen exercises zijn gegenereerd voor deze dag
-    query = 'SELECT treatment_exercise_id FROM treatment_exercise WHERE todo_date = ' + '"' + current_date + '"';
+    query = 'SELECT treatment_exercise_id FROM treatment_exercise AS te ' +
+        'INNER JOIN treatment AS t ON t.treatment_id = te.treatment_id ' +
+        'WHERE todo_date = ' + '"' + current_date + '" ' +
+        'AND t.user_id = ' + user_id;
+
 
     connection.query(query, function (err, result) {
         if (err) {
