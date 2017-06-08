@@ -32,6 +32,8 @@ router.post('/add', function (req, res) {
     console.log("start date: " + start_date);
     console.log("end date: " + end_date);
 
+    // TESTING
+    // var query = 'INSERT INTO treatment (user_id, start_date, end_date) VALUES ("' + user_id + '", "' + start_date + '", "' + end_date + '");';
     var query = 'INSERT INTO treatment (user_id, start_date, end_date) VALUES ("' + user_id + '", "' + start_date + '", "' + end_date + '");';
 
     connection.query(query, function (err) {
@@ -99,7 +101,7 @@ router.get('/exercise-now', function (req, res) {
         'WHERE t.user_id = '+ user_id + ' '+
         'AND t.end_date >= "' + utils.getCurrentDate() +'" '+
         'AND t.start_date <= "' + utils.getCurrentDate() +'" '+
-        'AND todo_date = "'+ "2017-05-21"+'" ' +
+        'AND todo_date = "'+ "2017-06-07"+'" ' +
         'LIMIT 1';
     query = 'SELECT e.*, te.rating_user, te.done FROM exercise AS e '+
     'INNER JOIN treatment_exercise AS te ON te.exercise_id = e.exercise_id '+
@@ -230,6 +232,7 @@ function generateExercises(user_id, current_date, req, res) {
         }
 
         (function () {
+            // var hour = -1;
             var newTime = new Date();
 
             for (i = 0; i < result.length; i++) {
