@@ -15,6 +15,8 @@ var connection = require('./connection.js');
 var config = require('./config.js');
 var utils = require('./utils.js');
 
+var getExercise = false;
+
 /**
  * Post method for creating a new treatment.
  */
@@ -53,19 +55,28 @@ router.post('/add', function (req, res) {
  * Get method for showing all exercises of a certain day.
  */
 router.get('/exercises-day', function (req, res) {
+
+    getExercise = true;
+    checkForExerciseGeneration(req, res);
+
+
+});
+
+function getExercises(req, res){
+    getExercise = false;
+
     var user_id = req.decoded.user_id;
     var date = req.header('day');
-
     console.log("user id: " + user_id);
     console.log("Date: " + date);
 
     var query = 'SELECT e.*, te.rating_user, te.done, te.treatment_exercise_id FROM exercise AS e '+
-    'INNER JOIN treatment_exercise AS te ON e.exercise_id = te.exercise_id '+
-    'INNER JOIN treatment AS t ON te.treatment_id = t.treatment_id '+
-    'WHERE t.user_id = '+ user_id + ' '+
-    'AND t.end_date >= "' + utils.getCurrentDate() +'" '+
-    'AND t.start_date <= "' + utils.getCurrentDate() +'" '+
-    'AND todo_date = "' + date +'" ';
+        'INNER JOIN treatment_exercise AS te ON e.exercise_id = te.exercise_id '+
+        'INNER JOIN treatment AS t ON te.treatment_id = t.treatment_id '+
+        'WHERE t.user_id = '+ user_id + ' '+
+        'AND t.end_date >= "' + utils.getCurrentDate() +'" '+
+        'AND t.start_date <= "' + utils.getCurrentDate() +'" '+
+        'AND todo_date = "' + date +'" ';
 
     connection.query(query, function (err, result) {
         if (err){
@@ -74,7 +85,7 @@ router.get('/exercises-day', function (req, res) {
         }
         res.status(200).json(result);
     });
-});
+}
 
 //TODO per tijdstip maken
 router.get('/exercise-now', function (req, res) {
@@ -117,7 +128,7 @@ router.put('/exercise-done', function (req, res) {
     var user_id = req.decoded.user_id;
 
     console.log("** user_id: " + user_id);
-    console.log("** exerciseId: " + exerciseId);
+    console.log("** exerciseId: " + treatment_exercise_id);
     console.log("** done: " + done);
 
     // TODO token check
@@ -167,24 +178,30 @@ function checkForExerciseGeneration(req, res) {
     console.log("** user_id: " + user_id);
     console.log("** current_date: " + current_date);
 
+    //TODO user specifiek
     // check of er nog geen exercises zijn gegenereerd voor deze dag
-    query = 'SELECT treatment_exercise_id FROM treatment_exercise WHERE todo_date = ' + current_date;
+    query = 'SELECT treatment_exercise_id FROM treatment_exercise WHERE todo_date = ' + '"' + current_date + '"';
 
     connection.query(query, function (err, result) {
         if (err) {
             console.log("Error: " + err);
         }
-
+        console.log("TESTT: "+result);
+        console.log("TESTT2: "+result.length);
         // Check of er meerdere rows zijn gevonden met als datum vandaag
         if(result.length > 0){
             // Er hoeft niks te worden gegenereerd!
             console.log("Exercises are already generated for today!");
+            if(getExercise) {
+                getExercises(req, res);
+            }
+
         } else {
             // Genereer oefeningen!
             console.log("** Exercises not earlier generated for today, so allowed to start generation!");
             console.log();
             console.log("----- start exercise generation!");
-            generateExercises(user_id, current_date);
+            generateExercises(user_id, current_date, req, res);
         }
     });
 }
@@ -194,7 +211,7 @@ function checkForExerciseGeneration(req, res) {
  * @param user_id
  * @param current_date
  */
-function generateExercises(user_id, current_date) {
+function generateExercises(user_id, current_date, req, res) {
     var exercise_id;
 
     console.log("user_id: " + user_id);
@@ -203,7 +220,9 @@ function generateExercises(user_id, current_date) {
     // Onderstaande query selecteert alle oefeningen die bij de klachten van een gebruiker horen
     var query = 'SELECT exercise_id FROM complaint_exercise AS ce ' +
         'INNER JOIN user_complaint AS uc ON uc.complaint_id = ce.complaint_id ' +
-        'WHERE uc.user_id = ' + user_id;
+        'WHERE uc.user_id = ' + user_id + ' ' +
+        'LIMIT 4';
+
 
     connection.query(query, function (err, result) {
         if (err) {
@@ -223,7 +242,7 @@ function generateExercises(user_id, current_date) {
                     console.log("-- CURRENT TIME: " + newTime.getHours() + ":" + newTime.getMinutes());
 
                     // Check: time may not be greater than or equal to 16:30
-                    if((newTime.getHours() >= 16 && newTime.getMinutes() >= 30)){
+                    if((newTime.getHours() >= 24 && newTime.getMinutes() >= 30)){
                         console.log("-- Too late to generate :D");
                         console.log("--------------------------------------------------")
                     } else {
@@ -288,6 +307,9 @@ function generateExercises(user_id, current_date) {
                 })();
             }
         })();
+        if(getExercise) {
+            getExercises(req, res);
+        }
         console.log("----- end posting exercises successfully!");
         console.log();
     });
