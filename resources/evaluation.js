@@ -58,20 +58,59 @@ router.get('', function (req, res) {
 });
 
 router.post('/add', function (req, res) {
-    console.log("hier komt hij");
-    var user_id = req.decoded.userId;
-    var image_url = JSON.parse(req.body.image_url);
+    var user_id = req.decoded.user_id;
+    var answers = JSON.parse(req.body.answers);
+    var evaluation_id = 0;
 
-    var query = 'INSERT INTO evaluation (user_id, image_url) VALUES ("' + user_id + '", "' + image_url + '");';
+    console.log("** user_id: " + user_id);
+    console.log("** answers: " + answers);
+    console.log("length: " + answers.length);
 
-    connection.query(query, function (err) {
-        if (err) {
-            console.log(err.message);
-            // utils.error(409, 'Already exists', res);
-            res.status(400).send("Foute aanvraag");
-            return;
+    console.log();
+    console.log("----- start posting evaluation");
+    (function () {
+        for (i = 0; i < answers.length; i++) {
+            var insertAnswers = [];
+
+            if(answers[i].radio != undefined){
+                console.log("RADIO: " + answers[i].radio);
+                insertAnswers.push(answers[i].radio);
+            }
+            if(answers[i].checkbox != undefined){
+                var checkboxes = answers[i].checkbox;
+                console.log("checkboxes: " + checkboxes);
+                for(j = 0; j < checkboxes.length; j++) {
+                    console.log(checkboxes[j]);
+                    insertAnswers.push(checkboxes[j]);
+                }
+            }
+
+            console.log("insertAnswers.length: " + insertAnswers.length);
+
+            (function () {
+                for (k = 0; k < insertAnswers.length; k++) {
+                    evaluation_id++;
+                    var query = 'INSERT INTO treatment_evaluation (evaluation_id, treatment_id, answer) ' +
+                        'VALUES (' + evaluation_id + ', (SELECT te.treatment_id FROM treatment AS te ' +
+                        'WHERE te.user_id = ' + user_id + '), "' + insertAnswers[k] + '");';
+
+                    connection.query(query, function (err, result) {
+                        if (err) {
+                            console.log(err.message);
+                            // utils.error(409, 'Already exists', res);
+                            res.status(400).send("Foute aanvraag");
+                            return;
+                        }
+
+                        console.log("result: " + result);
+
+                        res.status(201).send();
+                    });
+                }
+            })();
+
         }
-
-        res.status(201).send("Evaluatie gecreëerd");
-    })
+    })();
+    console.log("----- end posting evaluation successfully!");
+    console.log();
 });
