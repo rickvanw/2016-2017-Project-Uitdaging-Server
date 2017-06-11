@@ -250,7 +250,7 @@ function generateExercises(user_id, current_date, req, res) {
     var query = 'SELECT exercise_id FROM complaint_exercise AS ce ' +
         'INNER JOIN user_complaint AS uc ON uc.complaint_id = ce.complaint_id ' +
         'WHERE uc.user_id = ' + user_id + ' ' +
-        'LIMIT 4';
+        'LIMIT 7';
 
 
     connection.query(query, function (err, result) {
@@ -272,7 +272,7 @@ function generateExercises(user_id, current_date, req, res) {
                     console.log("-- CURRENT TIME: " + newTime.getHours() + ":" + newTime.getMinutes());
 
                     // Check: time may not be greater than or equal to 16:30
-                    if((newTime.getHours() >= 24 && newTime.getMinutes() >= 30)){
+                    if((newTime.getHours() >= 16 && newTime.getMinutes() >= 30)){
                         console.log("-- Too late to generate :D");
                         console.log("--------------------------------------------------")
                     } else {
