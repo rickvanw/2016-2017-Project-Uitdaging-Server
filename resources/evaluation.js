@@ -54,7 +54,7 @@ router.get('', function (req, res) {
         console.log(evaluation);
 
         res.status(200).json(evaluation);
-    })
+    });
 });
 
 router.post('/add', function (req, res) {
@@ -136,5 +136,4 @@ router.post('/add', function (req, res) {
             console.log();
         }
     });
-
 });
