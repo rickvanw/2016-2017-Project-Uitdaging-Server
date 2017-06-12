@@ -31,6 +31,22 @@ router.get('', function (req, res) {
     })
 });
 
+router.get('/rows', function (req, res) {
+    var exerciseId = req.header('exerciseId');
+    var query = 'SELECT count(*) FROM exercise';
+
+    connection.query(query, function (err, exercise) {
+        if (err) {
+            console.log(err.message);
+            // utils.error(409, 'Already exists', res);
+            res.status(404).send("Cannot calculate the amount of rows");
+            return;
+        }
+
+        res.status(200).json(exercise);
+    })
+});
+
 
 router.get('/admin-exercise-page', function (req, res) {
     var page = req.header('page');
