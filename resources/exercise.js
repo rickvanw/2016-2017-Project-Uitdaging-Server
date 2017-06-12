@@ -31,6 +31,29 @@ router.get('', function (req, res) {
     })
 });
 
+
+router.get('/admin-exercise-page', function (req, res) {
+    var page = req.header('page');
+    var previousAmount = (page + "0")-10;
+
+    console.log("previousAmount: "+previousAmount + "page: "+page);
+
+    var query = 'SELECT * FROM exercise ' +
+    'ORDER BY name ' + ' ' +
+    'LIMIT ' + previousAmount + ', 10';
+
+    connection.query(query, function (err, exercise) {
+        if (err) {
+            console.log(err.message);
+            // utils.error(409, 'Already exists', res);
+            res.status(404).send("Cannot find exercises!");
+            return;
+        }
+
+        res.status(200).json(exercise);
+    })
+});
+
 router.put('/rate', function (req, res) {
     var treatment_exercise_id = req.body.treatment_exercise_id;
     var rating = req.body.rating;
