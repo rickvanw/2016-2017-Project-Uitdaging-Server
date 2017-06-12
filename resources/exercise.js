@@ -114,5 +114,25 @@ router.put('/rate', function (req, res) {
         }
 
         res.status(200).send(rating);
-    })
+    });
+});
+
+router.delete('', function (req, res) {
+    var exercise_id = req.body.exercise_id;
+    console.log("----- DELETE exercise");
+    console.log("** ID: " + exercise_id);
+
+    var query = 'DELETE FROM exercise WHERE exercise_id = ' + exercise_id;
+
+    connection.query(query, function (err, result) {
+        if (err) {
+            console.log(err.message);
+            // utils.error(409, 'Already exists', res);
+            res.status(404).send("Cannot find exercise with the given ID!");
+            return;
+        }
+        console.log("** succes!");
+
+        res.status(200).send(result);
+    });
 });
