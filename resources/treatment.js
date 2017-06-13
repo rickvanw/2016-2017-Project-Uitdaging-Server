@@ -157,3 +157,16 @@ router.put('/exercise-done', function (req, res) {
     });
 });
 
+router.get('/startdate', function (req, res) {
+    var query = 'SELECT start_date, treatment_id FROM treatment ORDER BY start_date ASC';
+
+    connection.query(query, function (err, result) {
+        if (err){
+            res.status(404).send("Niet gevonden");
+            return;
+        }
+
+        res.status(200).json(result);
+    });
+});
+
