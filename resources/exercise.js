@@ -47,7 +47,6 @@ router.get('/rows', function (req, res) {
     })
 });
 
-
 router.get('/admin-exercise-page', function (req, res) {
     var page = req.header('page');
     var previousAmount = (page + "0")-10;
@@ -135,4 +134,31 @@ router.delete('', function (req, res) {
 
         res.status(200).send(result);
     });
+});
+
+router.post('', function (req, res) {
+    var exercise_id = req.body.exercise_id;
+    var name = req.body.name;
+    var description = req.body.description;
+    var repetitions = req.body.repetitions;
+    var media_url = req.body.media_url;
+
+    console.log("DES: " + description);
+
+    var query = 'UPDATE exercise SET name = "'+name+ '", ' +
+        'description = "' + description+ '", '+
+        'repetitions = "' + repetitions+ '", '+
+        'media_url = "' + media_url+ '" '+
+        'WHERE exercise_id = "' + exercise_id+'"';
+
+    connection.query(query, function (err, exercise) {
+        if (err) {
+            console.log(err.message);
+            // utils.error(409, 'Already exists', res);
+            res.status(404).send("Cannot find exercise with the given ID!");
+            return;
+        }
+
+        res.status(200).json(exercise);
+    })
 });
