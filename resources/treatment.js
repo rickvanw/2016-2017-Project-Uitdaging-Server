@@ -203,13 +203,11 @@ function checkForExerciseGeneration(req, res) {
     console.log("** user_id: " + user_id);
     console.log("** current_date: " + current_date);
 
-    //TODO user specifiek
     // check of er nog geen exercises zijn gegenereerd voor deze dag
     query = 'SELECT treatment_exercise_id FROM treatment_exercise AS te ' +
         'INNER JOIN treatment AS t ON t.treatment_id = te.treatment_id ' +
         'WHERE todo_date = ' + '"' + current_date + '" ' +
         'AND t.user_id = ' + user_id;
-
 
     connection.query(query, function (err, result) {
         if (err) {
@@ -224,7 +222,6 @@ function checkForExerciseGeneration(req, res) {
             if(getExercise) {
                 getExercises(req, res);
             }
-
         } else {
             // Genereer oefeningen!
             console.log("** Exercises not earlier generated for today, so allowed to start generation!");
@@ -242,105 +239,167 @@ function checkForExerciseGeneration(req, res) {
  */
 function generateExercises(user_id, current_date, req, res) {
     var exercise_id;
+    var query = "";
 
     console.log("user_id: " + user_id);
     console.log("current_date: " + current_date);
 
-    // Onderstaande query selecteert alle oefeningen die bij de klachten van een gebruiker horen
-    var query = 'SELECT exercise_id FROM complaint_exercise AS ce ' +
-        'INNER JOIN user_complaint AS uc ON uc.complaint_id = ce.complaint_id ' +
-        'WHERE uc.user_id = ' + user_id + ' ' +
-        'LIMIT 7';
+    query = 'SELECT uc.complaint_id FROM user_complaint AS uc ' +
+        'WHERE user_id = ' + user_id;
 
-
-    connection.query(query, function (err, result) {
+    connection.query(query, function(err, result) {
         if (err) {
             console.log("Error: " + err);
         }
 
-        (function () {
-            // var hour = -1;
+        console.log("------------------------");
+
+        if (result[0].complaint_id === 6) {
+            console.log("-- start generating random complaints!");
+
             var newTime = new Date();
+            var generated_ids = generateRandomComplaints();
 
-            for (i = 0; i < result.length; i++) {
+            console.log("-- end generating random complaints!");
+
+            for (b = 0; b < generated_ids.length; b++) {
+                var generated_complaint_id = generated_ids[b];
+                console.log("Generated meegegeven id: " + generated_complaint_id);
+                query = 'SELECT ce.exercise_id FROM complaint_exercise AS ce ' +
+                    'WHERE ce.complaint_id = ' + generated_ids[b] + ' ' +
+                    'LIMIT 1';
+                connection.query(query, function (err, result) {
+                    if (err) {
+                        console.log("Error: " + err);
+                    }
+
+                    console.log("*****************************RESULT: " + result);
+
+                    (function () {
+                        exercise_id = result[0].exercise_id;
+                        generateExerciseTimes(newTime, exercise_id, b, current_date, user_id);
+                    })();
+                });
+            }
+        } else {
+            // Onderstaande query selecteert alle oefeningen die bij de klachten van een gebruiker horen
+            query = 'SELECT exercise_id FROM complaint_exercise AS ce ' +
+                'INNER JOIN user_complaint AS uc ON uc.complaint_id = ce.complaint_id ' +
+                'WHERE uc.user_id = ' + user_id + ' ' +
+                'LIMIT 7';
+
+            connection.query(query, function (err, result) {
+                if (err) {
+                    console.log("Error: " + err);
+                }
+
                 (function () {
-                    var printTime = new Date();
-                    var hh;
+                    var newTime = new Date();
 
-                    console.log();
-                    console.log("--------------------------------------------------");
-                    console.log("-- CURRENT TIME: " + newTime.getHours() + ":" + newTime.getMinutes());
-
-                    // Check: time may not be greater than or equal to 16:30
-                    if((newTime.getHours() >= 16 && newTime.getMinutes() >= 30)){
-                        console.log("-- Too late to generate :D");
-                        console.log("--------------------------------------------------")
-                    } else {
-                        console.log("-- It's not 16:30 yet!");
-                        // console.log("-- Current time: " + newTime.getHours() + ":" + newTime.getMinutes());
-                        var mm = newTime.getMinutes(); // haal het aantal minuten op
-
-                        // Als het de eerste keer is en de tijd groter/gelijk dan 30
-                        // if (i === 0 && mm >= 30) { // Als het aantal minuten groter of gelijk is aan 30, moeten we het uur de eerste keer 1 ophogen
-                        //     console.log("i: " + i);
-                        //     console.log(">=30");
-                        //     console.log("EERST: " + newTime.getHours());
-                        //     hh = newTime.getHours() + 1;
-                        //     newTime.setHours(hh);
-                        //     console.log("ER NA: " + newTime.getHours());
-                        //     console.log();
-                        // } else
-
-                        // When it's the first time and the amount of minutes < 30, we only need to set the current hour
-                        if(i === 0 && mm < 30){
-                            // console.log("i: " + i);
-                            // console.log("<30");
-                            // console.log("EERST: " + newTime.getHours());
-                            hh = newTime.getHours();
-                            newTime.setHours(hh);
-                            // console.log("ER NA: " + newTime.getHours());
-                            // console.log();
-                            // When it's the first time and the amount of minutes >= 30, we want to add 1 to the current hour
-                            // When it's not the first time, we still want to add 1 hour to the current time for every new exercise
-                        } else {
-                            // console.log("EERST: " + newTime.getHours());
-                            hh = newTime.getHours() + 1;
-                            newTime.setHours(hh);
-                            // console.log("ER NA: " + newTime.getHours());
-                            // console.log();
-                        }
-                        mm = 30; // set het aantal minuten nu op 30, omdat we om het halfuur een oefening willen
-                        newTime.setMinutes(mm);
-                        var ss = '00';
-
-                        printTime = hh + ":" + mm + ":" + ss;
-                        console.log();
-                        console.log("-->\tINSERT GENERATED EXERCISE TIME: " + printTime);
-
-                        exercise_id = result[i].exercise_id;
-                        console.log("-->\tINSERT exercise " + (i + 1) + " with exercise_id: " + exercise_id);
-                        console.log("--------------------------------------------------");
-
-                        // Onderstaande query voegt aan de koppeltabel treatment_exercise het betreffende behandelplan toe van de gebruiker,
-                        // een random gegenereerde oefening, en de to do datum & to do tijd vd oefening
-                        query = 'INSERT INTO treatment_exercise (treatment_id, exercise_id, todo_date, todo_time) ' +
-                            'VALUES ((SELECT te.treatment_id FROM treatment AS te ' +
-                            'WHERE "' + current_date + '" between te.start_date AND te.end_date ' +
-                            'AND te.user_id = ' + user_id + '), ' + exercise_id + ', "' + utils.getCurrentDate() + '", "' + printTime + '")';
-
-                        connection.query(query, function (err, result) {
-                            if (err) {
-                                console.log("Error: " + err);
-                            }
-                        });
+                    for (i = 0; i < result.length; i++) {
+                        (function () {
+                            exercise_id = result[i].exercise_id;
+                            generateExerciseTimes(newTime, exercise_id, i, current_date, user_id);
+                        })();
                     }
                 })();
-            }
-        })();
-        if(getExercise) {
-            getExercises(req, res);
+                if (getExercise) {
+                    getExercises(req, res);
+                }
+                console.log("----- end posting exercises successfully!");
+                console.log();
+            });
         }
-        console.log("----- end posting exercises successfully!");
-        console.log();
     });
+}
+
+/**
+ * Function for generating a time for exercises
+ * @param newTime
+ * @param exercise_id
+ * @param i
+ * @param current_date
+ * @param user_id
+ */
+function generateExerciseTimes(newTime, exercise_id, i, current_date, user_id) {
+    var printTime = new Date();
+    var hh;
+
+    console.log();
+    console.log("--------------------------------------------------");
+    console.log("-- CURRENT TIME: " + newTime.getHours() + ":" + newTime.getMinutes());
+
+    // Check: time may not be greater than or equal to 16:30
+    if ((newTime.getHours() >= 23 && newTime.getMinutes() >= 30)) {
+        console.log("-- Too late to generate :D");
+        console.log("--------------------------------------------------")
+    } else {
+        console.log("-- It's not 16:30 yet!");
+        var mm = newTime.getMinutes(); // haal het aantal minuten op
+
+        // When it's the first time and the amount of minutes < 30, we only need to set the current hour
+        if (i === 0 && mm < 30) {
+            hh = newTime.getHours();
+            newTime.setHours(hh);
+        } else {
+            hh = newTime.getHours() + 1;
+            newTime.setHours(hh);
+        }
+        mm = 30; // set het aantal minuten nu op 30, omdat we om het halfuur een oefening willen
+        newTime.setMinutes(mm);
+        var ss = '00';
+
+        printTime = hh + ":" + mm + ":" + ss;
+        console.log();
+        console.log("-->\tINSERT GENERATED EXERCISE TIME: " + printTime);
+
+        console.log("-->\tINSERT exercise with exercise_id: " + exercise_id);
+        console.log("--------------------------------------------------");
+
+        // Onderstaande query voegt aan de koppeltabel treatment_exercise het betreffende behandelplan toe van de gebruiker,
+        // een random gegenereerde oefening, en de to do datum & to do tijd vd oefening
+        var query = 'INSERT INTO treatment_exercise (treatment_id, exercise_id, todo_date, todo_time) ' +
+            'VALUES ((SELECT te.treatment_id FROM treatment AS te ' +
+            'WHERE "' + current_date + '" between te.start_date AND te.end_date ' +
+            'AND te.user_id = ' + user_id + '), ' + exercise_id + ', "' + utils.getCurrentDate() + '", "' + printTime + '")';
+
+        connection.query(query, function (err, result) {
+            if (err) {
+                console.log("Error: " + err);
+            }
+        });
+    }
+}
+
+/**
+ * Function that generates an random array of complaints for prevention.
+ * @returns {Array}
+ */
+function generateRandomComplaints() {
+    var complaint_ids = [1, 2, 3, 4, 5, 6];
+    var generated_ids = [];
+    var count = 0;
+
+    (function () {
+        while (count < 4) {
+            var rand = complaint_ids[Math.floor(Math.random() * complaint_ids.length)];
+            var found = false;
+
+            for (a = 0; a < generated_ids.length; a++) {
+                if (rand === generated_ids[a]) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                generated_ids.push(rand);
+                count++;
+                bool = true;
+            }
+        }
+    })();
+
+    console.log('- comIDS: ' + complaint_ids);
+    console.log('- genIDS: ' + generated_ids);
+    return generated_ids;
 }
