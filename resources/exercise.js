@@ -71,6 +71,15 @@ router.get('', function (req, res) {
     });
 });
 
+/**
+ * @api {delete} /tasks/:id Remove a task
+ * @apiGroup Tasks
+ * @apiParam {id} id Task id
+ * @apiSuccessExample {json} Success
+ *    HTTP/1.1 204 No Content
+ * @apiErrorExample {json} Delete error
+ *    HTTP/1.1 500 Internal Server Error
+ */4
 router.put('/rate', function (req, res) {
     var treatment_exercise_id = req.body.treatment_exercise_id;
     var rating = req.body.rating;
