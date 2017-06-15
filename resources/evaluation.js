@@ -54,63 +54,99 @@ router.get('', function (req, res) {
         console.log(evaluation);
 
         res.status(200).json(evaluation);
-    })
+    });
 });
 
 router.post('/add', function (req, res) {
     var user_id = req.decoded.user_id;
     var answers = JSON.parse(req.body.answers);
-    var evaluation_id = 0;
-
-    console.log("** user_id: " + user_id);
-    console.log("** answers: " + answers);
-    console.log("length: " + answers.length);
+    var evaluation_count = 0;
 
     console.log();
-    console.log("----- start posting evaluation");
-    (function () {
-        for (i = 0; i < answers.length; i++) {
-            var insertAnswers = [];
+    console.log();
+    console.log("**************************** CHECK FOR POSTING EVALUATION **********************************");
+    console.log("** user_id: " + user_id);
 
-            if(answers[i].radio != undefined){
-                console.log("RADIO: " + answers[i].radio);
-                insertAnswers.push(answers[i].radio);
-            }
-            if(answers[i].checkbox != undefined){
-                var checkboxes = answers[i].checkbox;
-                console.log("checkboxes: " + checkboxes);
-                for(j = 0; j < checkboxes.length; j++) {
-                    console.log(checkboxes[j]);
-                    insertAnswers.push(checkboxes[j]);
-                }
-            }
+    var query = 'SELECT evaluation_id FROM treatment_evaluation AS te ' +
+        'INNER JOIN treatment AS t ON t.treatment_id = te.treatment_id ' +
+        'WHERE t.user_id = ' + user_id;
 
-            console.log("insertAnswers.length: " + insertAnswers.length);
+    connection.query(query, function (err, result) {
+        if (err) {
+            console.log("Error: " + err);
+        }
 
+        var evaluation_id;
+
+        for (i = 0; i < result.length; i++) {
+            evaluation_id = result[i].evaluation_id;
+        }
+        console.log("** evaluation_id: " + evaluation_id);
+
+        if (evaluation_id !== undefined) {
+            console.log("Answers for evaluation earlier defined for user with id " + user_id);
+            res.status(406).send("Evaluation already posted!");
+        } else {
+            console.log("** Answers for evaluation not earlier defined, so allowed to post evaluation!");
+            console.log();
+            console.log("----- start posting evaluation");
             (function () {
-                for (k = 0; k < insertAnswers.length; k++) {
-                    evaluation_id++;
-                    var query = 'INSERT INTO treatment_evaluation (evaluation_id, treatment_id, answer) ' +
-                        'VALUES (' + evaluation_id + ', (SELECT te.treatment_id FROM treatment AS te ' +
-                        'WHERE te.user_id = ' + user_id + '), "' + insertAnswers[k] + '");';
+                for (i = 0; i < answers.length; i++) {
+                    var insertAnswers = [];
 
-                    connection.query(query, function (err, result) {
-                        if (err) {
-                            console.log(err.message);
-                            // utils.error(409, 'Already exists', res);
-                            res.status(400).send("Foute aanvraag");
-                            return;
+                    if (answers[i].radio != undefined) {
+                        console.log("RADIO: " + answers[i].radio);
+                        insertAnswers.push(answers[i].radio);
+                    }
+                    if (answers[i].checkbox != undefined) {
+                        var checkboxes = answers[i].checkbox;
+                        console.log("checkboxes: " + checkboxes);
+                        for (j = 0; j < checkboxes.length; j++) {
+                            console.log(checkboxes[j]);
+                            insertAnswers.push(checkboxes[j]);
                         }
+                    }
 
-                        console.log("result: " + result);
+                    console.log("insertAnswers.length: " + insertAnswers.length);
 
-                        res.status(201).send();
-                    });
+                    (function () {
+                        for (k = 0; k < insertAnswers.length; k++) {
+                            evaluation_count++;
+                            var query = 'INSERT INTO treatment_evaluation (evaluation_id, treatment_id, answer) ' +
+                                'VALUES (' + evaluation_count + ', (SELECT te.treatment_id FROM treatment AS te ' +
+                                'WHERE te.user_id = ' + user_id + '), "' + insertAnswers[k] + '");';
+
+                            connection.query(query, function (err, result) {
+                                if (err) {
+                                    console.log(err.message);
+                                    // utils.error(409, 'Already exists', res);
+                                    res.status(400).send("Foute aanvraag");
+                                    return;
+                                }
+
+                                console.log("result: " + result);
+
+                                res.status(201).send();
+                            });
+                        }
+                    })();
                 }
             })();
-
+            console.log("----- end posting evaluation successfully!");
+            console.log();
         }
-    })();
-    console.log("----- end posting evaluation successfully!");
-    console.log();
+    });
+});
+
+router.get('/evaluationid', function (req, res) {
+    var query = 'SELECT evaluation_id FROM evaluation';
+
+    connection.query(query, function (err, result) {
+        if (err){
+            res.status(404).send("Niet gevonden");
+            return;
+        }
+
+        res.status(200).json(result);
+    });
 });
