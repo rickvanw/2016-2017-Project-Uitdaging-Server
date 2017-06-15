@@ -23,10 +23,11 @@ router.get('', function (req, res) {
 
     var user_id = req.decoded.user_id;
 
-    var query = "SELECT role_id, email, first_name, last_name FROM user WHERE user_id = " + user_id;
+    var query = "SELECT email, first_name, last_name FROM user WHERE user_id = " + user_id;
     connection.query(query, function (err, result) {
         if (err){
             res.status(400).json([]);
+            console.log(err);
             return;
         }
         res.status(200).json(result);
@@ -67,7 +68,7 @@ router.put('/change', function (req, res) {
 
     var user_id = req.decoded.user_id;
 
-    var query = 'UPDATE user SET email= "'+email+'", password= "'+password+'", first_name= "'+first_name+'", last_name= "'+last_name+'" WHERE user_id='+user_id+'';
+    var query = 'UPDATE user SET email= "'+email+'", first_name= "'+first_name+'", last_name= "'+last_name+'" WHERE user_id='+user_id+'';
 
     console.log(query);
 
@@ -147,6 +148,8 @@ router.post('/login', function (req, res) {
     var email = req.body.email;
     var password = req.body.password;
 
+    console.log("login in")
+
     connection.query('SELECT user_id, role_id, password FROM user WHERE email = "' + email + '"', function (err, result) {
         if (err) {
             utils.error(500, "Something went wrong server side, please try again later", res);
@@ -161,7 +164,9 @@ router.post('/login', function (req, res) {
             // Check if password is correct
             res.status(200);
             var token = jwt.sign({email: email, user_id: result[0].user_id, role_id: result[0].role_id}, config.secretKey, {expiresIn: config.tokenExpiresIn});
+            console.log(token);
             res.send({token: token});
+
         }
         else {
             // Incorrect password
