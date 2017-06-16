@@ -53,9 +53,57 @@ router.get('/admin-exercise-page', function (req, res) {
 
     console.log("previousAmount: "+previousAmount + "page: "+page);
 
-    var query = 'SELECT * FROM exercise ' +
-    'ORDER BY name ' + ' ' +
+    var query =
+    'SELECT e.*, ' +
+        'COUNT(CASE WHEN te.rating_user = 1 THEN 1 ELSE NULL END) AS likes, ' +
+        'COUNT(CASE WHEN te.rating_user = -1 THEN 1 ELSE NULL END) AS dislikes, ' +
+        'COUNT(CASE WHEN te.done = 1 THEN 1 ELSE NULL END) AS done, ' +
+        'COUNT(CASE WHEN te.done = -1 THEN 1 ELSE NULL END) AS notdone ' +
+    'FROM exercise AS e ' +
+    'LEFT JOIN treatment_exercise AS te ON te.exercise_id = e.exercise_id ' +
+    'GROUP BY e.exercise_id ' +
+    'ORDER BY name ' +
     'LIMIT ' + previousAmount + ', 10';
+
+    connection.query(query, function (err, exercise) {
+        if (err) {
+            console.log(err.message);
+            // utils.error(409, 'Already exists', res);
+            res.status(404).send("Cannot find exercises!");
+            return;
+        }
+
+        res.status(200).json(exercise);
+    })
+});
+
+router.get('/likes-dislikes', function (req, res) {
+    var exerciseId = req.header('exerciseId');
+
+    var query = 'SELECT COUNT(CASE WHEN rating_user = 1 THEN 1 ELSE NULL END) AS likes, ' +
+        'COUNT(CASE WHEN rating_user = -1 THEN 1 ELSE NULL END) AS dislikes '+
+        'FROM treatment_exercise '+
+        'WHERE exercise_id = '+ exerciseId;
+
+    connection.query(query, function (err, exercise) {
+        if (err) {
+            console.log(err.message);
+            // utils.error(409, 'Already exists', res);
+            res.status(404).send("Cannot find exercises!");
+            return;
+        }
+
+        res.status(200).json(exercise);
+    })
+});
+
+router.get('/done-notdone', function (req, res) {
+    var exerciseId = req.header('exerciseId');
+
+    var query = 'SELECT COUNT(CASE WHEN done = 1 THEN 1 ELSE NULL END) AS done, ' +
+        'COUNT(CASE WHEN done = -1 THEN 1 ELSE NULL END) AS notdone '+
+        'FROM treatment_exercise '+
+        'WHERE exercise_id = '+ exerciseId;
 
     connection.query(query, function (err, exercise) {
         if (err) {
@@ -107,7 +155,6 @@ router.put('/rate', function (req, res) {
     connection.query(query, function (err, rating) {
         if (err) {
             console.log(err.message);
-            // utils.error(409, 'Already exists', res);
             res.status(404).send("Cannot find exercise with the given ID!");
             return;
         }
