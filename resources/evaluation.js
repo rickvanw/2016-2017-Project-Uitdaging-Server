@@ -34,7 +34,7 @@ var utils = require('./utils.js');
 //     })
 // });
 
-router.get('', function (req, res) {
+router.get('evaluations', function (req, res) {
     console.log("test");
     var user_id = req.decoded.user_id;
 
