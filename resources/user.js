@@ -61,14 +61,14 @@ router.post('/add', function (req, res) {
  * PUT method for changing personal data.
  */
 router.put('/change', function (req, res) {
+
     var email = req.body.email;
-    var password = req.body.password;
     var first_name = req.body.first_name;
-    var last_name = req.body.last_name;
+    var last_name = req.body.last_name
 
-    var user_id = req.decoded.user_id;
+    var user_id = req.body.user_id;
 
-    var query = 'UPDATE user SET email= "'+email+'", first_name= "'+first_name+'", last_name= "'+last_name+'" WHERE user_id='+user_id+'';
+    var query = 'UPDATE user SET email= "'+email+'", first_name= "'+first_name+'", last_name= "'+last_name+'" WHERE user_id='+user_id;
 
     console.log(query);
 
