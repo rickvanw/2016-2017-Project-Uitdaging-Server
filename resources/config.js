@@ -7,5 +7,5 @@ module.exports.maxFailedLogins = 5;
 module.exports.passwordResetTokenExpiresIn = 60*60*24*365;
 module.exports.email = '';
 module.exports.emailPassword = '';
-module.exports.httpURL = "http://localhost";
-module.exports.apiURL = "http://localhost";
+module.exports.httpURL = "http://178.21.112.250";
+module.exports.apiURL = "http://178.21.112.250";
