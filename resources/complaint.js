@@ -35,10 +35,9 @@ router.get('', function (req, res) {
     var user_id = req.decoded.user_id;
     console.log("check " + user_id);
 
-    var query = "SELECT c.name, tc.treatment_id FROM complaint AS c  " +
-        "INNER JOIN treatment_complaint AS tc ON tc.complaint_id = c.complaint_id " +
-        "INNER JOIN treatment AS t ON t.treatment_id = tc.treatment_id " +
-        "WHERE t.user_id = " + user_id;
+    var query = "SELECT c.name FROM complaint AS c " +
+        "INNER JOIN user_complaint AS uc ON uc.complaint_id = c.complaint_id " +
+        "WHERE uc.user_id = " + user_id;
 
     connection.query(query, function (err, result) {
         if (err){
