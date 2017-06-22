@@ -255,4 +255,28 @@ router.get('/password-reset-confirm', function (req, res) {
             });
 });
 
+/**
+ * PUT method for changing password.
+ */
+router.put('/changepassword', function (req, res) {
+
+    console.log("test");
+
+    var email = req.body.email;
+    var password = req.body.password;
+
+    var query = 'UPDATE user SET password = "' + password + '" WHERE email = "' + email + '"';
+    console.log(query);
+
+    connection.query(query, function (err) {
+        if (err) {
+            console.log(err.message);
+            utils.error(409, 'Already exists', res);
+            return;
+        }
+        res.status(201).send();
+    })
+});
+
+
 
