@@ -198,7 +198,7 @@ router.post('/password-reset-req', function (req, res) {
             from: '"Kom in Beweging" <komnuinbeweging@gmail.com>',  // Sender
             to: '' + userEmail,                            // Receiver //todo variable receiver
             subject: 'Wachtwoord reset aangevraagd',
-            html: 'Beste gebruiker<br>U heeft zojuist een nieuw wachtwoord aangevraagd<br>'+
+            html: 'Beste gebruiker'+ '<br>U heeft zojuist een nieuw wachtwoord aangevraagd<br>'+
             'Om met verzoek voor een nieuw wachtwoord door te zetten dient u op de onderstaande link te klikken.<br>' +
             'Klik dan op deze link om een nieuw wachtwoord te genereren: <a href="' + 'http://localhost:8000' + '/user/password-reset-confirm?email=' + userEmail + '">klik hier</a><br>' +
             '<br>Mvg, Kom in Beweging'
