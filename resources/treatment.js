@@ -160,7 +160,7 @@ router.put('/exercise-done', function (req, res) {
 router.get('/startdate', function (req, res) {
     var user_id = req.decoded.user_id;
     var query = "SELECT start_date, treatment_id FROM treatment ORDER BY start_date ASC"
-        + "WHERE uc.user_id = " + user_id;
+        + "WHERE user_id = " + user_id;
 
     connection.query(query, function (err, result) {
         if (err){
