@@ -251,6 +251,8 @@ router.get('/password-reset-confirm', function (req, res) {
 
                 // Let the client know it was successful.
                 res.status(204).send();
+                window.location.href = "http://localhost:8000/login.html";
+
             });
 });
 
