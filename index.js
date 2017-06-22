@@ -47,7 +47,6 @@ app.use(function (req, res, next) {
         } else {
             // Save the decoded payload to be used in the API calls.
             req.decoded = decoded;
-            console.log(req);
 
             if(isAdmin(req.url, req.method)){
                 console.log("ADMIN URL");
