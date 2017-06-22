@@ -123,3 +123,19 @@ utils.prototype.getEndDate = function(){
 function addDays(date, numOfDays) {
     date.setTime(date.getTime() + (86400000 * numOfDays));
 }
+
+function randomPassword(length) {
+    var chars = "abcdefghijklmnopqrstuvwxyz!@#$%^&*()-+<>ABCDEFGHIJKLMNOP1234567890";
+    var pass = "";
+    for (var x = 0; x < length; x++) {
+        var i = Math.floor(Math.random() * chars.length);
+        pass += chars.charAt(i);
+    }
+    return pass;
+}
+
+utils.prototype.generatePassword = function(){
+    var randomPass = randomPassword(8);
+
+    return randomPass;
+}

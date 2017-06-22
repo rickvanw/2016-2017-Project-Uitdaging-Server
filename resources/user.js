@@ -15,6 +15,7 @@ var jwt = require('jsonwebtoken');
 var connection = require('./connection.js');
 var config = require('./config.js');
 var utils = require('./utils.js');
+var email = require('./email.js');
 
 /**
  * GET method for showing info of logged in user.
@@ -147,7 +148,6 @@ router.post('/complaint/add', function (req, res) {
 router.post('/login', function (req, res) {
     var email = req.body.email;
     var password = req.body.password;
-
     console.log("login in")
 
     connection.query('SELECT user_id, role_id, password FROM user WHERE email = "' + email + '"', function (err, result) {
@@ -176,3 +176,82 @@ router.post('/login', function (req, res) {
         }
     });
 });
+
+/**
+ * Sends a password-reset email request to the user
+ */
+router.post('/password-reset-req', function (req, res) {
+    var userEmail = req.body.email;
+
+    // Check if the user exists.
+    var query1 = 'SELECT * FROM user WHERE email ="' + userEmail + '"';
+    connection.query(query1, function (err, result) {
+        if (err) {
+            utils.error(500, "Something went wrong, please try again later", res);
+            return;
+        } else if (result.length == 0) {
+            utils.error(404, "User not found.", res);
+            return;
+        }
+
+        var mailOptions = {
+            from: '"Kom in Beweging" <komnuinbeweging@gmail.com>',  // Sender
+            to: 'rubenassink@gmail.com',                            // Receiver //todo variable receiver
+            subject: 'Wachtwoord reset aangevraagd',
+            html: 'Beste gebruiker<br>U heeft zojuist een nieuw wachtwoord aangevraagd<br>'+
+            'Om met verzoek voor een nieuw wachtwoord door te zetten dient u op de onderstaande link te klikken.<br>' +
+            'Klik dan op deze link om een nieuw wachtwoord te genereren: <a href="' + 'http://localhost:8000' + '/user/password-reset-confirm' +'">klik hier</a><br>' +
+            '<br>Mvg, Kom in Beweging'
+        };
+
+        email.sendEmail(mailOptions);
+        // Send the email
+        if (email.sendEmail(mailOptions)) {
+            utils.error(500, "Something went wrong, please try again later", res);
+            return;
+        }
+        res.status(200).send();
+    });
+});
+
+/**
+ * When the reset link is clicked, a new password will be generated
+ */
+router.get('/password-reset-confirm', function (req, res) {
+    var emailUser = req.headers.email;
+    console.log("email: " + emailUser);
+
+            // Generate a new password.
+            var newPassword = utils.generatePassword();
+            console.log("New password: " + newPassword);
+
+            // Update the password of the user.
+            var query = 'UPDATE user SET password = "' + newPassword + '" WHERE email = "' + emailUser + '"';
+            connection.query(query, function (err) {
+                if (err) {
+                    utils.error(500, "Something went wrong, please try again.", res);
+                    return;
+                }
+
+                var mailOptions = {
+                    from: '"Kom in Beweging" <komnuinbeweging@gmail.com>',  // Sender
+                    to: 'rubenassink@gmail.com',
+                    subject: 'Password reset', // Subject line
+                    text: 'Hey!\n\nWe hebben je wachtwoord veranderd omdat je dit aangevraagd hebt. Het nieuwe wachtwoord is: '+
+                    '\n' + newPassword +
+                    '\nJe kunt nu met het nieuwe wachtwoord inloggen' +
+                    '\nGroeten, Kom in Beweging'
+                };
+
+                // Send the email.
+                if (email.sendEmail(mailOptions)) {
+                    utils.error(500, "Something went wrong, please try again", res);
+                    return;
+                }
+
+                // Let the client know it was successful.
+                res.status(204).send();
+            });
+});
+
+
