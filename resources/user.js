@@ -49,11 +49,44 @@ router.post('/add', function (req, res) {
 
     connection.query(query, function (err) {
         if (err) {
-            console.log(err.message);
-            utils.error(409, 'Already exists', res);
+            console.log("ERRORCODE: " + err.code);
+
+            if(err.code == "ER_DUP_ENTRY"){
+                res.status(409).send("Email already exists");
+
+            }else {
+                res.status(400).send("Bad request");
+            }
             return;
         }
-        res.status(201).send();
+        res.status(201).send({});
+    })
+});
+
+router.post('/add-admin', function (req, res) {
+
+    var email = req.body.email;
+    var password = req.body.password;
+    var first_name = req.body.first_name;
+    var last_name = req.body.last_name;
+
+    var query = 'INSERT INTO user(email, password, first_name, last_name, role_id) VALUES ("'+email+'","'+password+'","'+first_name+'","'+last_name+'","1")';
+
+    console.log(query);
+
+    connection.query(query, function (err) {
+        if (err) {
+            console.log("ERRORCODE: " + err.code);
+
+            if(err.code == "ER_DUP_ENTRY"){
+                res.status(409).send("Email already exists");
+
+            }else {
+                res.status(400).send("Bad request");
+            }
+            return;
+        }
+        res.status(201).send({});
     })
 });
 
@@ -64,7 +97,7 @@ router.put('/change', function (req, res) {
 
     var email = req.body.email;
     var first_name = req.body.first_name;
-    var last_name = req.body.last_name
+    var last_name = req.body.last_name;
 
     var user_id = req.body.user_id;
 
@@ -148,7 +181,7 @@ router.post('/login', function (req, res) {
     var email = req.body.email;
     var password = req.body.password;
 
-    console.log("login in")
+    console.log("login in");
 
     connection.query('SELECT user_id, role_id, password FROM user WHERE email = "' + email + '"', function (err, result) {
         if (err) {

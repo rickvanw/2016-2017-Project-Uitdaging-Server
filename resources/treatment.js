@@ -16,6 +16,8 @@ var config = require('./config.js');
 var utils = require('./utils.js');
 
 var getExercise = false;
+var getExerciseNowEnable = false;
+
 
 /**
  * Get method for getting the current treatment for a user
@@ -83,8 +85,12 @@ router.get('/exercises-day', function (req, res) {
 
     getExercise = true;
     checkForExerciseGeneration(req, res);
+});
 
+router.get('/exercise-now', function (req, res) {
 
+    getExerciseNowEnable = true;
+    checkForExerciseGeneration(req, res);
 });
 
 function getExercises(req, res){
@@ -112,27 +118,21 @@ function getExercises(req, res){
     });
 }
 
-//TODO per tijdstip maken
-router.get('/exercise-now', function (req, res) {
+function getExerciseNow(req, res){
+    getExerciseNowEnable = false;
     var user_id = req.decoded.user_id;
     var query = "";
     console.log(JSON.stringify(req.headers));
 
-    query = 'SELECT e.*, te.rating_user, te.done, te.treatment_exercise_id FROM exercise AS e '+
-        'INNER JOIN treatment_exercise AS te ON e.exercise_id = te.exercise_id '+
-        'INNER JOIN treatment AS t ON te.treatment_id = t.treatment_id '+
-        'WHERE t.user_id = '+ user_id + ' '+
-        'AND t.end_date >= "' + utils.getCurrentDate() +'" '+
-        'AND t.start_date <= "' + utils.getCurrentDate() +'" '+
-        'AND todo_date = "'+ "2017-06-07"+'" ' +
-        'LIMIT 1';
     query = 'SELECT e.*, te.rating_user, te.done FROM exercise AS e '+
-    'INNER JOIN treatment_exercise AS te ON te.exercise_id = e.exercise_id '+
-    'INNER JOIN treatment AS t ON t.treatment_id = te.treatment_id '+
-    'WHERE t.user_id = ' + user_id + ' '+
-    'AND t.end_date >= "' + utils.getEndDate() + '" '+
-    'AND t.start_date <= "' + utils.getCurrentDate() + '" ' +
-    'AND te.todo_date = "' + date + '"';
+        'INNER JOIN treatment_exercise AS te ON te.exercise_id = e.exercise_id '+
+        'INNER JOIN treatment AS t ON t.treatment_id = te.treatment_id '+
+        'WHERE t.user_id = ' + user_id + ' '+
+        'AND t.end_date >= "' + utils.getCurrentDate() + '" '+
+        'AND t.start_date <= "' + utils.getCurrentDate() + '" ' +
+        'AND te.todo_date = "' + utils.getCurrentDate() + '" ' +
+        'AND te.todo_time >= "' + utils.getCurrentTime() + '" ' +
+        'LIMIT 1';
 
     connection.query(query, function (err, result) {
         if (err){
@@ -142,7 +142,7 @@ router.get('/exercise-now', function (req, res) {
         console.log("result: " + result);
         res.status(200).json(result);
     });
-});
+}
 
 /**
  * PUT method for marking exercises as done or undone.
@@ -221,6 +221,8 @@ function checkForExerciseGeneration(req, res) {
             console.log("Exercises are already generated for today!");
             if(getExercise) {
                 getExercises(req, res);
+            }else if(getExerciseNowEnable){
+                getExerciseNow(req, res);
             }
         } else {
             // Genereer oefeningen!
@@ -274,11 +276,9 @@ function generateExercises(user_id, current_date, req, res) {
                     }
 
                     console.log("*****************************RESULT: " + result);
+                    exercise_id = result[0].exercise_id;
+                    generateExerciseTimes(newTime, exercise_id, b, current_date, user_id);
 
-                    (function () {
-                        exercise_id = result[0].exercise_id;
-                        generateExerciseTimes(newTime, exercise_id, b, current_date, user_id);
-                    })();
                 });
             }
         } else {
@@ -376,7 +376,7 @@ function generateExerciseTimes(newTime, exercise_id, i, current_date, user_id) {
  * @returns {Array}
  */
 function generateRandomComplaints() {
-    var complaint_ids = [1, 2, 3, 4, 5, 6];
+    var complaint_ids = [1, 2, 3, 4, 5];
     var generated_ids = [];
     var count = 0;
 

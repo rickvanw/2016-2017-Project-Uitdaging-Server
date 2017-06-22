@@ -223,9 +223,7 @@ router.delete('', function (req, res) {
     });
 });
 
-
-
-router.post('', function (req, res) {
+router.put('', function (req, res) {
     var exercise_id = req.body.exercise_id;
     var name = req.body.name;
     var description = req.body.description;
@@ -247,6 +245,7 @@ router.post('', function (req, res) {
             res.status(404).send("Cannot find exercise with the given ID!");
             return;
         }
+
         res.status(200).json(exercise);
     })
 });
