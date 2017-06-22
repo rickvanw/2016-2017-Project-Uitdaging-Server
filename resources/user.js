@@ -196,11 +196,11 @@ router.post('/password-reset-req', function (req, res) {
 
         var mailOptions = {
             from: '"Kom in Beweging" <komnuinbeweging@gmail.com>',  // Sender
-            to: 'rubenassink@gmail.com',                            // Receiver //todo variable receiver
+            to: '' + userEmail,                            // Receiver //todo variable receiver
             subject: 'Wachtwoord reset aangevraagd',
             html: 'Beste gebruiker<br>U heeft zojuist een nieuw wachtwoord aangevraagd<br>'+
             'Om met verzoek voor een nieuw wachtwoord door te zetten dient u op de onderstaande link te klikken.<br>' +
-            'Klik dan op deze link om een nieuw wachtwoord te genereren: <a href="' + 'http://localhost:8000' + '/user/password-reset-confirm' +'">klik hier</a><br>' +
+            'Klik dan op deze link om een nieuw wachtwoord te genereren: <a href="' + 'http://localhost:8000' + '/user/password-reset-confirm?email=' + userEmail + '">klik hier</a><br>' +
             '<br>Mvg, Kom in Beweging'
         };
 
@@ -218,7 +218,7 @@ router.post('/password-reset-req', function (req, res) {
  * When the reset link is clicked, a new password will be generated
  */
 router.get('/password-reset-confirm', function (req, res) {
-    var emailUser = req.headers.email;
+    var emailUser = req.query.email;
     console.log("email: " + emailUser);
 
             // Generate a new password.
@@ -226,8 +226,8 @@ router.get('/password-reset-confirm', function (req, res) {
             console.log("New password: " + newPassword);
 
             // Update the password of the user.
-            var query = 'UPDATE user SET password = "' + newPassword + '" WHERE email = "' + emailUser + '"';
-            connection.query(query, function (err) {
+            var query4 = 'UPDATE user SET password = "' + newPassword + '" WHERE email = "' + emailUser + '"';
+            connection.query(query4, function (err) {
                 if (err) {
                     utils.error(500, "Something went wrong, please try again.", res);
                     return;
@@ -235,7 +235,7 @@ router.get('/password-reset-confirm', function (req, res) {
 
                 var mailOptions = {
                     from: '"Kom in Beweging" <komnuinbeweging@gmail.com>',  // Sender
-                    to: 'rubenassink@gmail.com',
+                    to: emailUser,
                     subject: 'Password reset', // Subject line
                     text: 'Hey!\n\nWe hebben je wachtwoord veranderd omdat je dit aangevraagd hebt. Het nieuwe wachtwoord is: '+
                     '\n' + newPassword +
@@ -251,7 +251,6 @@ router.get('/password-reset-confirm', function (req, res) {
 
                 // Let the client know it was successful.
                 res.status(204).send();
-                window.location.href = "http://localhost:8000/login.html";
 
             });
 });
