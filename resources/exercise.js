@@ -31,6 +31,46 @@ router.get('', function (req, res) {
     });
 });
 
+router.post('', function (req, res){
+    var name = req.body.exercise_name;
+    var description = req.body.description;
+    var media_url = req.body.media_url;
+    var image_url = req.body.image_url;
+    var repetitions = req.body.repetitions;
+    var rating = 0;
+    var active = 1;
+
+    console.log();
+    console.log("----- start posting exercise");
+    console.log("** Name: " + name);
+    console.log("** Description: " + description);
+    console.log("** media_url: " + media_url);
+    console.log("** image_url: " + image_url);
+    console.log("** repetitions: " + repetitions);
+    console.log("** Rating: " + rating);
+    console.log("** Active: " + active);
+
+    (function () {
+        var query = 'INSERT INTO exercise (name, description, media_url, image_url, repetitions, rating, active) ' +
+            'VALUES ("' + name + '", "' + description + '", "' + media_url + '", "' + image_url + '", ' +
+            repetitions + ', ' + rating + ', ' + active + ');';
+
+        connection.query(query, function (err, result) {
+            if (err) {
+                console.log(err.message);
+                res.status(404).send("Cannot post exercise");
+                return;
+            }
+
+            console.log("Succes!");
+            res.status(200).send();
+        });
+    })();
+
+    console.log("----- end posting exercise successfully!");
+    console.log();
+});
+
 router.get('/rows', function (req, res) {
     var exerciseId = req.header('exerciseId');
     var query = 'SELECT count(*) FROM exercise';
@@ -183,45 +223,7 @@ router.delete('', function (req, res) {
     });
 });
 
-router.post('', function (req, res){
-    var name = req.body.exercise_name;
-    var description = req.body.description;
-    var media_url = req.body.media_url;
-    var image_url = req.body.image_url;
-    var repetitions = req.body.repetitions;
-    var rating = 0;
-    var active = 1;
 
-    console.log();
-    console.log("----- start posting exercise");
-    console.log("** Name: " + name);
-    console.log("** Description: " + description);
-    console.log("** media_url: " + media_url);
-    console.log("** image_url: " + image_url);
-    console.log("** repetitions: " + repetitions);
-    console.log("** Rating: " + rating);
-    console.log("** Active: " + active);
-
-    (function () {
-        var query = 'INSERT INTO exercise (name, description, media_url, image_url, repetitions, rating, active) ' +
-            'VALUES ("' + name + '", "' + description + '", "' + media_url + '", "' + image_url + '", ' +
-            repetitions + ', ' + rating + ', ' + active + ');';
-
-        connection.query(query, function (err, result) {
-            if (err) {
-                console.log(err.message);
-                res.status(404).send("Cannot post exercise");
-                return;
-            }
-
-            console.log("Succes!");
-            res.status(200).send();
-        });
-    })();
-
-    console.log("----- end posting exercise successfully!");
-    console.log();
-});
 
 router.post('', function (req, res) {
     var exercise_id = req.body.exercise_id;
