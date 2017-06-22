@@ -158,11 +158,13 @@ router.put('/exercise-done', function (req, res) {
 });
 
 router.get('/startdate', function (req, res) {
-    var query = 'SELECT start_date, treatment_id FROM treatment ORDER BY start_date ASC';
+    var user_id = req.decoded.user_id;
+    var query = "SELECT start_date, treatment_id FROM treatment ORDER BY start_date ASC"
+        + "WHERE uc.user_id = " + user_id;
 
     connection.query(query, function (err, result) {
         if (err){
-            res.status(404).send("Niet gevonden");
+            res.status(400).json("ERROR");
             return;
         }
 
