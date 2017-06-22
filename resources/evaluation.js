@@ -114,6 +114,11 @@ router.post('/add', function (req, res) {
                             types.push("checkbox");
                         }
                     }
+                    if (answers[i].selected != undefined) {
+                        console.log("SELECT: " + answers[i].selected);
+                        insertAnswers.push(answers[i].selected);
+                        types.push("select");
+                    }
 
                     console.log("insertAnswers.length: " + insertAnswers.length);
 
