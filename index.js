@@ -13,8 +13,7 @@ var bodyparser = require('body-parser');
 var app = express();
 
 var publicUrls = ["/user/add", "/user/login", "/user/password-reset-request", "/user/confirm-password-reset"];
-//var adminUrls = ["/user/add-admin"];
-var adminUrls = ["/user/add-admin", "/exercise"];
+var adminUrls = ["/user/add-admin", "/exercise", "/exercise/admin-exercise-page"];
 
 
 /*
@@ -105,7 +104,7 @@ app.listen(8000, function () {
 //--------------setting routers---------------
 
 var complaint = require("./resources/complaint.js");
-app.use('/complaints', complaint);
+app.use('/complaint', complaint);
 
 var evaluation = require("./resources/evaluation.js");
 app.use('/evaluation', evaluation);

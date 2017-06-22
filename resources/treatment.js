@@ -72,7 +72,7 @@ router.post('/add', function (req, res) {
         // if the treatment is created, the function for generating exercises will be called
         checkForExerciseGeneration(req, res);
 
-        res.status(201).send("Treatment created!");
+        //res.status(201).send("Treatment created!");
     });
 
     console.log("----- end treatment creation!");
@@ -115,6 +115,7 @@ function getExercises(req, res){
             return;
         }
         res.status(200).json(result);
+
     });
 }
 
@@ -256,59 +257,65 @@ function generateExercises(user_id, current_date, req, res) {
 
         console.log("------------------------");
 
-        if (result[0].complaint_id === 6) {
-            console.log("-- start generating random complaints!");
+        if (result[0] === undefined) {
+            res.status(404).send("Cannot find any complaints");
+            return;
+        }else {
 
-            var newTime = new Date();
-            var generated_ids = generateRandomComplaints();
+            if (result[0].complaint_id === 6) {
+                console.log("-- start generating random complaints!");
 
-            console.log("-- end generating random complaints!");
+                var newTime = new Date();
+                var generated_ids = generateRandomComplaints();
 
-            for (b = 0; b < generated_ids.length; b++) {
-                var generated_complaint_id = generated_ids[b];
-                console.log("Generated meegegeven id: " + generated_complaint_id);
-                query = 'SELECT ce.exercise_id FROM complaint_exercise AS ce ' +
-                    'WHERE ce.complaint_id = ' + generated_ids[b] + ' ' +
-                    'LIMIT 1';
+                console.log("-- end generating random complaints!");
+
+                for (b = 0; b < generated_ids.length; b++) {
+                    var generated_complaint_id = generated_ids[b];
+                    console.log("Generated meegegeven id: " + generated_complaint_id);
+                    query = 'SELECT ce.exercise_id FROM complaint_exercise AS ce ' +
+                        'WHERE ce.complaint_id = ' + generated_ids[b] + ' ' +
+                        'LIMIT 1';
+                    connection.query(query, function (err, result) {
+                        if (err) {
+                            console.log("Error: " + err);
+                        }
+
+                        console.log("*****************************RESULT: " + result);
+                        exercise_id = result[0].exercise_id;
+                        generateExerciseTimes(newTime, exercise_id, b, current_date, user_id);
+
+                    });
+                }
+            } else {
+                // Onderstaande query selecteert alle oefeningen die bij de klachten van een gebruiker horen
+                query = 'SELECT exercise_id FROM complaint_exercise AS ce ' +
+                    'INNER JOIN user_complaint AS uc ON uc.complaint_id = ce.complaint_id ' +
+                    'WHERE uc.user_id = ' + user_id + ' ' +
+                    'LIMIT 7';
+
                 connection.query(query, function (err, result) {
                     if (err) {
                         console.log("Error: " + err);
                     }
 
-                    console.log("*****************************RESULT: " + result);
-                    exercise_id = result[0].exercise_id;
-                    generateExerciseTimes(newTime, exercise_id, b, current_date, user_id);
+                    (function () {
+                        var newTime = new Date();
 
+                        for (i = 0; i < result.length; i++) {
+                            (function () {
+                                exercise_id = result[i].exercise_id;
+                                generateExerciseTimes(newTime, exercise_id, i, current_date, user_id);
+                            })();
+                        }
+                    })();
+                    if (getExercise) {
+                        getExercises(req, res);
+                    }
+                    console.log("----- end posting exercises successfully!");
+                    console.log();
                 });
             }
-        } else {
-            // Onderstaande query selecteert alle oefeningen die bij de klachten van een gebruiker horen
-            query = 'SELECT exercise_id FROM complaint_exercise AS ce ' +
-                'INNER JOIN user_complaint AS uc ON uc.complaint_id = ce.complaint_id ' +
-                'WHERE uc.user_id = ' + user_id + ' ' +
-                'LIMIT 7';
-
-            connection.query(query, function (err, result) {
-                if (err) {
-                    console.log("Error: " + err);
-                }
-
-                (function () {
-                    var newTime = new Date();
-
-                    for (i = 0; i < result.length; i++) {
-                        (function () {
-                            exercise_id = result[i].exercise_id;
-                            generateExerciseTimes(newTime, exercise_id, i, current_date, user_id);
-                        })();
-                    }
-                })();
-                if (getExercise) {
-                    getExercises(req, res);
-                }
-                console.log("----- end posting exercises successfully!");
-                console.log();
-            });
         }
     });
 }
