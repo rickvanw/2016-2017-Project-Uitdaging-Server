@@ -183,7 +183,7 @@ router.delete('', function (req, res) {
     });
 });
 
-router.post('', function (req, res) {
+router.put('', function (req, res) {
     var exercise_id = req.body.exercise_id;
     var name = req.body.name;
     var description = req.body.description;
@@ -197,6 +197,35 @@ router.post('', function (req, res) {
         'repetitions = "' + repetitions+ '", '+
         'media_url = "' + media_url+ '" '+
         'WHERE exercise_id = "' + exercise_id+'"';
+
+    connection.query(query, function (err, exercise) {
+        if (err) {
+            console.log(err.message);
+            // utils.error(409, 'Already exists', res);
+            res.status(404).send("Cannot find exercise with the given ID!");
+            return;
+        }
+
+        res.status(200).json(exercise);
+    })
+});
+
+router.post('', function (req, res) {
+    console.log("POST EXERCISE");
+    var name = req.body.name;
+    var description = req.body.description;
+    var repetitions = req.body.repetitions;
+    var media_url = req.body.media_url;
+    var image_url = req.body.image_url;
+
+    console.log("DES: " + description);
+
+    var query = 'INSERT INTO exercise (name, ' +
+        'description, '+
+        'repetitions, '+
+        'media_url, '+
+        'image_url) '+
+        'VALUES ("'+name+ '", "' + description+ '", "' + repetitions+ '", "' + media_url+ '", "' + image_url+ '")';
 
     connection.query(query, function (err, exercise) {
         if (err) {

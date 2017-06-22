@@ -128,7 +128,7 @@ function getExerciseNow(req, res){
         'INNER JOIN treatment_exercise AS te ON te.exercise_id = e.exercise_id '+
         'INNER JOIN treatment AS t ON t.treatment_id = te.treatment_id '+
         'WHERE t.user_id = ' + user_id + ' '+
-        'AND t.end_date >= "' + utils.getEndDate() + '" '+
+        'AND t.end_date >= "' + utils.getCurrentDate() + '" '+
         'AND t.start_date <= "' + utils.getCurrentDate() + '" ' +
         'AND te.todo_date = "' + utils.getCurrentDate() + '" ' +
         'AND te.todo_time >= "' + utils.getCurrentTime() + '" ' +
