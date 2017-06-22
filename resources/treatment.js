@@ -161,7 +161,7 @@ router.get('/startdate', function (req, res) {
     console.log("checkkk");
     var user_id = req.decoded.user_id;
     console.log("check " + user_id);
-    var query = "SELECT start_date, treatment_id FROM treatment WHERE user_id = " + user_id + " ORDER BY start_date ASC";
+    var query = "SELECT start_date, end_date, treatment_id FROM treatment WHERE user_id = " + user_id + " ORDER BY start_date ASC";
 
     connection.query(query, function (err, result) {
         if (err){
