@@ -337,7 +337,7 @@ function generateExerciseTimes(newTime, exercise_id, i, current_date, user_id) {
     console.log("-- CURRENT TIME: " + newTime.getHours() + ":" + newTime.getMinutes());
 
     // Check: time may not be greater than or equal to 16:30
-    if ((newTime.getHours() >= 23 && newTime.getMinutes() >= 30)) {
+    if ((newTime.getHours() >= 16 && newTime.getMinutes() >= 30)) {
         console.log("-- Too late to generate :D");
         console.log("--------------------------------------------------")
     } else {
