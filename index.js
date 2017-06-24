@@ -12,7 +12,7 @@ var bodyparser = require('body-parser');
 
 var app = express();
 
-var publicUrls = ["/user/add", "/user/login", "/user/password-reset-request", "/user/confirm-password-reset"];
+var publicUrls = ["/user/add", "/user/login", "/user/password-reset-req", "/user/password-reset-confirm"];
 var adminUrls = ["/user/add-admin", "/exercise", "/exercise/admin-exercise-page"];
 
 
