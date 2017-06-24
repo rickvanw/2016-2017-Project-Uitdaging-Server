@@ -153,16 +153,3 @@ router.post('/add', function (req, res) {
         }
     });
 });
-
-router.get('/evaluationid', function (req, res) {
-    var query = 'SELECT evaluation_id FROM evaluation';
-
-    connection.query(query, function (err, result) {
-        if (err){
-            res.status(404).send("Niet gevonden");
-            return;
-        }
-
-        res.status(200).json(result);
-    });
-});
