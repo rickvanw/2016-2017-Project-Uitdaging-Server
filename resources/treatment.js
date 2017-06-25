@@ -25,7 +25,7 @@ var getExerciseNowEnable = false;
 router.get('/to-evaluate', function (req, res) {
     var user_id = req.decoded.user_id;
 
-    console.log("user id: " + user_id);
+    //console.log("user id: " + user_id);
 
     var query = 'SELECT * FROM treatment ' +
         'WHERE user_id ='+ user_id + ' '+
@@ -46,16 +46,16 @@ router.get('/to-evaluate', function (req, res) {
  * Post method for creating a new treatment.
  */
 router.post('/add', function (req, res) {
-    console.log("JOEgegergrRR");
+    //console.log("JOEgegergrRR");
     var user_id = req.decoded.user_id;
     var start_date = utils.getCurrentDate();
     var end_date = utils.getEndDate();
 
-    console.log();
-    console.log("----- start treatment creation!");
-    console.log("user id: " + user_id);
-    console.log("start date: " + start_date);
-    console.log("end date: " + end_date);
+    //console.log();
+    //console.log("----- start treatment creation!");
+    //console.log("user id: " + user_id);
+    //console.log("start date: " + start_date);
+    //console.log("end date: " + end_date);
 
     // TESTING
     // var query = 'INSERT INTO treatment (user_id, start_date, end_date) VALUES ("' + user_id + '", "' + start_date + '", "' + end_date + '");';
@@ -63,7 +63,7 @@ router.post('/add', function (req, res) {
 
     connection.query(query, function (err) {
         if (err) {
-            console.log(err.message);
+            //console.log(err.message);
             // utils.error(409, 'Already exists', res);
             res.status(400).send("Bad request");
             return;
@@ -75,7 +75,7 @@ router.post('/add', function (req, res) {
         //res.status(201).send("Treatment created!");
     });
 
-    console.log("----- end treatment creation!");
+    //console.log("----- end treatment creation!");
 });
 
 /**
@@ -98,8 +98,8 @@ function getExercises(req, res){
 
     var user_id = req.decoded.user_id;
     var date = req.header('day');
-    console.log("user id: " + user_id);
-    console.log("Date: " + date);
+    //console.log("user id: " + user_id);
+    //console.log("Date: " + date);
 
     var query = 'SELECT e.*, te.rating_user, te.done, te.treatment_exercise_id FROM exercise AS e '+
         'INNER JOIN treatment_exercise AS te ON e.exercise_id = te.exercise_id '+
@@ -123,7 +123,7 @@ function getExerciseNow(req, res){
     getExerciseNowEnable = false;
     var user_id = req.decoded.user_id;
     var query = "";
-    console.log(JSON.stringify(req.headers));
+    //console.log(JSON.stringify(req.headers));
 
     query = 'SELECT e.*, te.rating_user, te.done FROM exercise AS e '+
         'INNER JOIN treatment_exercise AS te ON te.exercise_id = e.exercise_id '+
@@ -140,7 +140,7 @@ function getExerciseNow(req, res){
             res.status(404).send("Not found");
             return;
         }
-        console.log("result: " + result);
+        //console.log("result: " + result);
         res.status(200).json(result);
     });
 }
@@ -153,9 +153,9 @@ router.put('/exercise-done', function (req, res) {
     var done = req.body.done;
     var user_id = req.decoded.user_id;
 
-    console.log("** user_id: " + user_id);
-    console.log("** exerciseId: " + treatment_exercise_id);
-    console.log("** done: " + done);
+    //console.log("** user_id: " + user_id);
+    //console.log("** exerciseId: " + treatment_exercise_id);
+    //console.log("** done: " + done);
 
     // TODO token check
     var query;
@@ -179,13 +179,13 @@ router.put('/exercise-done', function (req, res) {
 
     connection.query(query, function(err, done){
         if (err) {
-            console.log(err.message);
+            //console.log(err.message);
             // utils.error(409, 'Already exists', res);
             res.status(404).send("Cannot find exercise with the given ID!");
             return;
         }
 
-        console.log("succes!");
+        //console.log("succes!");
         res.status(200).send(done);
     });
 });
@@ -198,11 +198,11 @@ function checkForExerciseGeneration(req, res) {
     var current_date = utils.getCurrentDate();
     var query = "";
 
-    console.log();
-    console.log();
-    console.log("**************************** CHECK FOR GENERATION **********************************");
-    console.log("** user_id: " + user_id);
-    console.log("** current_date: " + current_date);
+    //console.log();
+    //console.log();
+    //console.log("**************************** CHECK FOR GENERATION **********************************");
+    //console.log("** user_id: " + user_id);
+    //console.log("** current_date: " + current_date);
 
     // check of er nog geen exercises zijn gegenereerd voor deze dag
     query = 'SELECT treatment_exercise_id FROM treatment_exercise AS te ' +
@@ -212,14 +212,14 @@ function checkForExerciseGeneration(req, res) {
 
     connection.query(query, function (err, result) {
         if (err) {
-            console.log("Error: " + err);
+            //console.log("Error: " + err);
         }
-        console.log("TESTT: "+result);
-        console.log("TESTT2: "+result.length);
+        //console.log("TESTT: "+result);
+        //console.log("TESTT2: "+result.length);
         // Check of er meerdere rows zijn gevonden met als datum vandaag
         if(result.length > 0){
             // Er hoeft niks te worden gegenereerd!
-            console.log("Exercises are already generated for today!");
+            //console.log("Exercises are already generated for today!");
             if(getExercise) {
                 getExercises(req, res);
             }else if(getExerciseNowEnable){
@@ -227,9 +227,9 @@ function checkForExerciseGeneration(req, res) {
             }
         } else {
             // Genereer oefeningen!
-            console.log("** Exercises not earlier generated for today, so allowed to start generation!");
-            console.log();
-            console.log("----- start exercise generation!");
+            //console.log("** Exercises not earlier generated for today, so allowed to start generation!");
+            //console.log();
+            //console.log("----- start exercise generation!");
             generateExercises(user_id, current_date, req, res);
         }
     });
@@ -244,18 +244,18 @@ function generateExercises(user_id, current_date, req, res) {
     var exercise_id;
     var query = "";
 
-    console.log("user_id: " + user_id);
-    console.log("current_date: " + current_date);
+    //console.log("user_id: " + user_id);
+    //console.log("current_date: " + current_date);
 
     query = 'SELECT uc.complaint_id FROM user_complaint AS uc ' +
         'WHERE user_id = ' + user_id;
 
     connection.query(query, function(err, result) {
         if (err) {
-            console.log("Error: " + err);
+            //console.log("Error: " + err);
         }
 
-        console.log("------------------------");
+        //console.log("------------------------");
 
         if (result[0] === undefined) {
             res.status(404).send("Cannot find any complaints");
@@ -263,25 +263,25 @@ function generateExercises(user_id, current_date, req, res) {
         }else {
 
             if (result[0].complaint_id === 6) {
-                console.log("-- start generating random complaints!");
+                //console.log("-- start generating random complaints!");
 
                 var newTime = new Date();
                 var generated_ids = generateRandomComplaints();
 
-                console.log("-- end generating random complaints!");
+                //console.log("-- end generating random complaints!");
 
                 for (b = 0; b < generated_ids.length; b++) {
                     var generated_complaint_id = generated_ids[b];
-                    console.log("Generated meegegeven id: " + generated_complaint_id);
+                    //console.log("Generated meegegeven id: " + generated_complaint_id);
                     query = 'SELECT ce.exercise_id FROM complaint_exercise AS ce ' +
                         'WHERE ce.complaint_id = ' + generated_ids[b] + ' ' +
                         'LIMIT 1';
                     connection.query(query, function (err, result) {
                         if (err) {
-                            console.log("Error: " + err);
+                            //console.log("Error: " + err);
                         }
 
-                        console.log("*****************************RESULT: " + result);
+                        //console.log("*****************************RESULT: " + result);
                         exercise_id = result[0].exercise_id;
                         generateExerciseTimes(newTime, exercise_id, b, current_date, user_id);
 
@@ -296,7 +296,7 @@ function generateExercises(user_id, current_date, req, res) {
 
                 connection.query(query, function (err, result) {
                     if (err) {
-                        console.log("Error: " + err);
+                        //console.log("Error: " + err);
                     }
 
                     (function () {
@@ -312,8 +312,8 @@ function generateExercises(user_id, current_date, req, res) {
                     if (getExercise) {
                         getExercises(req, res);
                     }
-                    console.log("----- end posting exercises successfully!");
-                    console.log();
+                    //console.log("----- end posting exercises successfully!");
+                    //console.log();
                 });
             }
         }
@@ -332,16 +332,16 @@ function generateExerciseTimes(newTime, exercise_id, i, current_date, user_id) {
     var printTime = new Date();
     var hh;
 
-    console.log();
-    console.log("--------------------------------------------------");
-    console.log("-- CURRENT TIME: " + newTime.getHours() + ":" + newTime.getMinutes());
+    //console.log();
+    //console.log("--------------------------------------------------");
+    //console.log("-- CURRENT TIME: " + newTime.getHours() + ":" + newTime.getMinutes());
 
     // Check: time may not be greater than or equal to 16:30
     if ((newTime.getHours() >= 16 && newTime.getMinutes() >= 30)) {
-        console.log("-- Too late to generate :D");
-        console.log("--------------------------------------------------")
+        //console.log("-- Too late to generate :D");
+        //console.log("--------------------------------------------------")
     } else {
-        console.log("-- It's not 16:30 yet!");
+        //console.log("-- It's not 16:30 yet!");
         var mm = newTime.getMinutes(); // haal het aantal minuten op
 
         // When it's the first time and the amount of minutes < 30, we only need to set the current hour
@@ -357,11 +357,11 @@ function generateExerciseTimes(newTime, exercise_id, i, current_date, user_id) {
         var ss = '00';
 
         printTime = hh + ":" + mm + ":" + ss;
-        console.log();
-        console.log("-->\tINSERT GENERATED EXERCISE TIME: " + printTime);
+        //console.log();
+        //console.log("-->\tINSERT GENERATED EXERCISE TIME: " + printTime);
 
-        console.log("-->\tINSERT exercise with exercise_id: " + exercise_id);
-        console.log("--------------------------------------------------");
+        //console.log("-->\tINSERT exercise with exercise_id: " + exercise_id);
+        //console.log("--------------------------------------------------");
 
         // Onderstaande query voegt aan de koppeltabel treatment_exercise het betreffende behandelplan toe van de gebruiker,
         // een random gegenereerde oefening, en de to do datum & to do tijd vd oefening
@@ -372,7 +372,7 @@ function generateExerciseTimes(newTime, exercise_id, i, current_date, user_id) {
 
         connection.query(query, function (err, result) {
             if (err) {
-                console.log("Error: " + err);
+                //console.log("Error: " + err);
             }
         });
     }
@@ -406,8 +406,8 @@ function generateRandomComplaints() {
         }
     })();
 
-    console.log('- comIDS: ' + complaint_ids);
-    console.log('- genIDS: ' + generated_ids);
+    //console.log('- comIDS: ' + complaint_ids);
+    //console.log('- genIDS: ' + generated_ids);
     return generated_ids;
 }
 
@@ -415,9 +415,9 @@ function generateRandomComplaints() {
  * Get method for getting treatment information for history page
  */
 router.get('/startdate', function (req, res) {
-    console.log("checkkk");
+    //console.log("checkkk");
     var user_id = req.decoded.user_id;
-    console.log("check " + user_id);
+    //console.log("check " + user_id);
     var query = "SELECT start_date, end_date, treatment_id FROM treatment WHERE user_id = " + user_id + " ORDER BY start_date ASC";
 
     connection.query(query, function (err, result) {
@@ -434,7 +434,7 @@ router.get('/startdate', function (req, res) {
  * Get method for getting evaluation information for historycontent page
  */
 router.get('/evaluationanswers', function (req, res) {
-    console.log("Zit in evaluation-answers");
+    //console.log("Zit in evaluation-answers");
     var user_id = req.decoded.user_id;
     var query = 'SELECT evaluation_id, answer FROM treatment_evaluation AS te ' +
         'INNER JOIN treatment AS tr ON tr.treatment_id = te.treatment_id ' +

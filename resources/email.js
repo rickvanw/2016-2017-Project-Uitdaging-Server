@@ -21,7 +21,7 @@ var email = function () {
 email.prototype.sendEmail = function (mailOptions) {
     transporter.sendMail(mailOptions, function(error, info){
         if(error){
-            console.log(error);
+            //console.log(error);
             return false;
         }
         return true;

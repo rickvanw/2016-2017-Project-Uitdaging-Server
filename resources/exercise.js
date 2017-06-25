@@ -21,7 +21,7 @@ router.get('', function (req, res) {
 
     connection.query(query, function (err, exercise) {
         if (err) {
-            console.log(err.message);
+            //console.log(err.message);
             // utils.error(409, 'Already exists', res);
             res.status(404).send("Cannot find exercise with the given ID!");
             return;
@@ -40,15 +40,15 @@ router.post('', function (req, res){
     var rating = 0;
     var active = 1;
 
-    console.log();
-    console.log("----- start posting exercise");
-    console.log("** Name: " + name);
-    console.log("** Description: " + description);
-    console.log("** media_url: " + media_url);
-    console.log("** image_url: " + image_url);
-    console.log("** repetitions: " + repetitions);
-    console.log("** Rating: " + rating);
-    console.log("** Active: " + active);
+    //console.log();
+    //console.log("----- start posting exercise");
+    //console.log("** Name: " + name);
+    //console.log("** Description: " + description);
+    //console.log("** media_url: " + media_url);
+    //console.log("** image_url: " + image_url);
+    //console.log("** repetitions: " + repetitions);
+    //console.log("** Rating: " + rating);
+    //console.log("** Active: " + active);
 
     (function () {
         var query = 'INSERT INTO exercise (name, description, media_url, image_url, repetitions, rating, active) ' +
@@ -57,18 +57,18 @@ router.post('', function (req, res){
 
         connection.query(query, function (err, result) {
             if (err) {
-                console.log(err.message);
+                //console.log(err.message);
                 res.status(404).send("Cannot post exercise");
                 return;
             }
 
-            console.log("Succes!");
+            //console.log("Succes!");
             res.status(200).send();
         });
     })();
 
-    console.log("----- end posting exercise successfully!");
-    console.log();
+    //console.log("----- end posting exercise successfully!");
+    //console.log();
 });
 
 router.get('/rows', function (req, res) {
@@ -77,7 +77,7 @@ router.get('/rows', function (req, res) {
 
     connection.query(query, function (err, exercise) {
         if (err) {
-            console.log(err.message);
+            //console.log(err.message);
             // utils.error(409, 'Already exists', res);
             res.status(404).send("Cannot calculate the amount of rows");
             return;
@@ -91,7 +91,7 @@ router.get('/admin-exercise-page', function (req, res) {
     var page = req.header('page');
     var previousAmount = (page + "0")-10;
 
-    console.log("previousAmount: "+previousAmount + "page: "+page);
+    //console.log("previousAmount: "+previousAmount + "page: "+page);
 
     var query =
     'SELECT e.*, ' +
@@ -107,7 +107,7 @@ router.get('/admin-exercise-page', function (req, res) {
 
     connection.query(query, function (err, exercise) {
         if (err) {
-            console.log(err.message);
+            //console.log(err.message);
             // utils.error(409, 'Already exists', res);
             res.status(404).send("Cannot find exercises!");
             return;
@@ -127,7 +127,7 @@ router.get('/likes-dislikes', function (req, res) {
 
     connection.query(query, function (err, exercise) {
         if (err) {
-            console.log(err.message);
+            //console.log(err.message);
             // utils.error(409, 'Already exists', res);
             res.status(404).send("Cannot find exercises!");
             return;
@@ -147,7 +147,7 @@ router.get('/done-notdone', function (req, res) {
 
     connection.query(query, function (err, exercise) {
         if (err) {
-            console.log(err.message);
+            //console.log(err.message);
             // utils.error(409, 'Already exists', res);
             res.status(404).send("Cannot find exercises!");
             return;
@@ -166,7 +166,7 @@ router.put('/rate', function (req, res) {
     // TODO user can only rate one exercise once
     //var userId = req.decoded.user_id;
 
-    console.log("RATING: "+rating);
+    //console.log("RATING: "+rating);
 
     if (rating==1){
         // Like
@@ -194,7 +194,7 @@ router.put('/rate', function (req, res) {
 
     connection.query(query, function (err, rating) {
         if (err) {
-            console.log(err.message);
+            //console.log(err.message);
             res.status(404).send("Cannot find exercise with the given ID!");
             return;
         }
@@ -205,19 +205,19 @@ router.put('/rate', function (req, res) {
 
 router.delete('', function (req, res) {
     var exercise_id = req.body.exercise_id;
-    console.log("----- DELETE exercise");
-    console.log("** ID: " + exercise_id);
+    //console.log("----- DELETE exercise");
+    //console.log("** ID: " + exercise_id);
 
     var query = 'DELETE FROM exercise WHERE exercise_id = ' + exercise_id;
 
     connection.query(query, function (err, result) {
         if (err) {
-            console.log(err.message);
+            //console.log(err.message);
             // utils.error(409, 'Already exists', res);
             res.status(404).send("Cannot find exercise with the given ID!");
             return;
         }
-        console.log("** succes!");
+        //console.log("** succes!");
 
         res.status(200).send(result);
     });
@@ -230,7 +230,7 @@ router.put('', function (req, res) {
     var repetitions = req.body.repetitions;
     var media_url = req.body.media_url;
 
-    console.log("DES: " + description);
+    //console.log("DES: " + description);
 
     var query = 'UPDATE exercise SET name = "'+name+ '", ' +
         'description = "' + description+ '", '+
@@ -240,7 +240,7 @@ router.put('', function (req, res) {
 
     connection.query(query, function (err, exercise) {
         if (err) {
-            console.log(err.message);
+            //console.log(err.message);
             // utils.error(409, 'Already exists', res);
             res.status(404).send("Cannot find exercise with the given ID!");
             return;

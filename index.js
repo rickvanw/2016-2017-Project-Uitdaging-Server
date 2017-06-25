@@ -27,9 +27,9 @@ app.use(cors());
  * called for every api call, to check authorization
  */
 app.use(function (req, res, next) {
-    console.log(JSON.stringify(req.headers));
+    //console.log(JSON.stringify(req.headers));
 
-    console.log("request " + req.url);
+    //console.log("request " + req.url);
     if (isPublic(req.url)) {
         next();
         return;
@@ -48,12 +48,12 @@ app.use(function (req, res, next) {
             req.decoded = decoded;
 
             if(isAdmin(req.url, req.method)){
-                console.log("ADMIN URL");
+                //console.log("ADMIN URL");
                 if(req.decoded.role_id != 1) {
-                    console.log("ADMIN NOT AUTHORIZED");
+                    //console.log("ADMIN NOT AUTHORIZED");
                     utils.error(401, err, res);
                 }else{
-                    console.log("ADMIN AUTHORIZED");
+                    //console.log("ADMIN AUTHORIZED");
                     next();
                 }
             }else{
@@ -66,7 +66,7 @@ app.use(function (req, res, next) {
 function isPublic(url) {
     for (var item in publicUrls) {
         if (url == (publicUrls[item])) {
-            console.log("PUBLIC");
+            //console.log("PUBLIC");
             return true;
         }
     }
@@ -82,7 +82,7 @@ function isAdmin(url, method) {
                 return false;
             }
 
-            console.log("ADMIN");
+            //console.log("ADMIN");
             return true;
         }
     }
@@ -96,7 +96,7 @@ app.use(bodyparser.urlencoded({
 //--------------starting server-------------
 
 app.listen(8000, function () {
-    console.log("opened on port 8000");
+    //console.log("opened on port 8000");
 });
 
 

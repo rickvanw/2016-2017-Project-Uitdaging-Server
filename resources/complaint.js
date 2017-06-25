@@ -16,9 +16,9 @@ var config = require('./config.js');
 var utils = require('./utils.js');
 
 router.get('', function (req, res) {
-    console.log("checkkk");
+    //console.log("checkkk");
     var user_id = req.decoded.user_id;
-    console.log("check " + user_id);
+    //console.log("check " + user_id);
 
     var query = "SELECT c.name FROM complaint AS c " +
         "INNER JOIN user_complaint AS uc ON uc.complaint_id = c.complaint_id " +
@@ -30,8 +30,8 @@ router.get('', function (req, res) {
             return;
         }
 
-        console.log("&&&&&&&succes");
-        console.log(result);
+        //console.log("&&&&&&&succes");
+        //console.log(result);
         res.status(200).json(result);
     });
 });
