@@ -173,3 +173,19 @@ router.get('/startdate', function (req, res) {
     });
 });
 
+router.get('/evaluationanswers', function (req, res) {
+    console.log("Zit in evaluation-answers");
+    var user_id = req.decoded.user_id;
+    var query = 'SELECT evaluation_id, answer FROM treatment_evaluation AS te ' +
+        'INNER JOIN treatment AS tr ON tr.treatment_id = te.treatment_id ' +
+        'WHERE tr.user_id = ' + user_id;
+
+    connection.query(query, function (err, result) {
+        if (err){
+            res.status(404).send("Niet gevonden");
+            return;
+        }
+
+        res.status(200).json(result);
+    });
+});
