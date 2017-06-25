@@ -96,7 +96,8 @@ router.post('/add', function (req, res) {
                     console.log("Question: " + questions[i]);
                     console.log("Answers: " + answers[i]);
 
-                    var questionIndex = questions.indexOf(questions[i]) + 1;
+                    var qIndex = questions.indexOf(questions[i]) + 1;
+                    var questionIndex = ((qIndex - 1) % 3) + 1;
                     console.log("Questionindex: " + questionIndex);
                     var insertAnswers = [];
                     var types = [];
