@@ -272,9 +272,10 @@ router.get('/password-reset-confirm', function (req, res) {
                     to: emailUser,
                     subject: 'Password reset', // Subject line
                     text: 'Hey!\n\nWe hebben je wachtwoord veranderd omdat je dit aangevraagd hebt. Het nieuwe wachtwoord is: '+
-                    '\n' + newPassword +
-                    '\nJe kunt nu met het nieuwe wachtwoord inloggen' +
-                    '\nGroeten, Kom in Beweging'
+                        '\n\n' + newPassword +
+                        '\n\nJe kunt nu met het nieuwe wachtwoord inloggen' +
+                        '\n Verander je wachtwoord na het inloggen in een nieuw wachtwoord.' +
+                        '\n\nGroeten, Kom in Beweging'
                 };
 
                 // Send the email.
