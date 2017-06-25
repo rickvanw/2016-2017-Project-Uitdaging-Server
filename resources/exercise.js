@@ -163,7 +163,6 @@ router.put('/rate', function (req, res) {
     var user_id = req.decoded.user_id;
     var query="";
 
-    // TODO user can only rate one exercise once
     //var userId = req.decoded.user_id;
 
     //console.log("RATING: "+rating);

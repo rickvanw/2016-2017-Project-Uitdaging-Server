@@ -16,10 +16,8 @@ var config = require('./config.js');
 var utils = require('./utils.js');
 
 // router.get('', function(req, res){
-//     // TODO token
 //     var user_id = req.body.userid;
 //
-//     // TODO token check
 //     var query = 'SELECT * FROM evaluation WHERE user_id = ' + user_id;
 //
 //     connection.query(query, function (err, evaluation) {

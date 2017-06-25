@@ -157,7 +157,6 @@ router.put('/exercise-done', function (req, res) {
     //console.log("** exerciseId: " + treatment_exercise_id);
     //console.log("** done: " + done);
 
-    // TODO token check
     var query;
     if (done == 1) {
         query = 'UPDATE treatment_exercise AS te '+
