@@ -12,7 +12,9 @@ var bodyparser = require('body-parser');
 
 var app = express();
 
-var publicUrls = [,"/complaints", "/user/add", "/user/login", "/user/change", "/user/password-reset-request", "/user/confirm-password-reset"];
+var publicUrls = ["/user/add", "/user/login", "/user/password-reset-req", "/user/password-reset-confirm"];
+var adminUrls = ["/user/add-admin", "/exercise", "/exercise/admin-exercise-page"];
+
 
 /*
  * Fixing cross domain problems
@@ -44,14 +46,43 @@ app.use(function (req, res, next) {
         } else {
             // Save the decoded payload to be used in the API calls.
             req.decoded = decoded;
-            next();
+
+            if(isAdmin(req.url, req.method)){
+                console.log("ADMIN URL");
+                if(req.decoded.role_id != 1) {
+                    console.log("ADMIN NOT AUTHORIZED");
+                    utils.error(401, err, res);
+                }else{
+                    console.log("ADMIN AUTHORIZED");
+                    next();
+                }
+            }else{
+                next();
+            }
         }
     });
 });
 
 function isPublic(url) {
     for (var item in publicUrls) {
-        if (url.startsWith(publicUrls[item])) {
+        if (url == (publicUrls[item])) {
+            console.log("PUBLIC");
+            return true;
+        }
+    }
+    return false;
+}
+
+function isAdmin(url, method) {
+    for (var item in adminUrls) {
+        if (url == (adminUrls[item])) {
+
+            // Check for exceptions
+            if(method == "GET" && (url == "/exercise")){
+                return false;
+            }
+
+            console.log("ADMIN");
             return true;
         }
     }
@@ -73,7 +104,7 @@ app.listen(8000, function () {
 //--------------setting routers---------------
 
 var complaint = require("./resources/complaint.js");
-app.use('/complaints', complaint);
+app.use('/complaint', complaint);
 
 var evaluation = require("./resources/evaluation.js");
 app.use('/evaluation', evaluation);

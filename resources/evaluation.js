@@ -59,6 +59,7 @@ router.get('evaluations', function (req, res) {
 
 router.post('/add', function (req, res) {
     var user_id = req.decoded.user_id;
+    var questions = JSON.parse(req.body.questions);
     var answers = JSON.parse(req.body.answers);
     var evaluation_count = 0;
 
@@ -92,29 +93,45 @@ router.post('/add', function (req, res) {
             console.log("----- start posting evaluation");
             (function () {
                 for (i = 0; i < answers.length; i++) {
+                    console.log("Question: " + questions[i]);
+                    console.log("Answers: " + answers[i]);
+
+                    var qIndex = questions.indexOf(questions[i]) + 1;
+                    var questionIndex = ((qIndex - 1) % 3) + 1;
+                    console.log("Questionindex: " + questionIndex);
                     var insertAnswers = [];
+                    var types = [];
 
                     if (answers[i].radio != undefined) {
                         console.log("RADIO: " + answers[i].radio);
                         insertAnswers.push(answers[i].radio);
+                        types.push("radio");
                     }
                     if (answers[i].checkbox != undefined) {
                         var checkboxes = answers[i].checkbox;
-                        console.log("checkboxes: " + checkboxes);
+                        console.log("CHECKBOX[]: " + checkboxes);
                         for (j = 0; j < checkboxes.length; j++) {
-                            console.log(checkboxes[j]);
                             insertAnswers.push(checkboxes[j]);
+                            types.push("checkbox");
                         }
+                    }
+                    if (answers[i].selected != undefined) {
+                        console.log("SELECT: " + answers[i].selected);
+                        insertAnswers.push(answers[i].selected);
+                        types.push("select");
                     }
 
                     console.log("insertAnswers.length: " + insertAnswers.length);
 
                     (function () {
                         for (k = 0; k < insertAnswers.length; k++) {
-                            evaluation_count++;
-                            var query = 'INSERT INTO treatment_evaluation (evaluation_id, treatment_id, answer) ' +
-                                'VALUES (' + evaluation_count + ', (SELECT te.treatment_id FROM treatment AS te ' +
-                                'WHERE te.user_id = ' + user_id + '), "' + insertAnswers[k] + '");';
+                            console.log();
+                            console.log("Insert question: " + questionIndex);
+                            console.log("Insert answer: " + insertAnswers[k]);
+                            console.log();
+                            var query = 'INSERT INTO treatment_evaluation (evaluation_id, treatment_id, answer, type) ' +
+                                'VALUES (' + questionIndex + ', (SELECT te.treatment_id FROM treatment AS te ' +
+                                'WHERE te.user_id = ' + user_id + '), "' + insertAnswers[k] + '", "' + types[k] + '");';
 
                             connection.query(query, function (err, result) {
                                 if (err) {
@@ -135,18 +152,5 @@ router.post('/add', function (req, res) {
             console.log("----- end posting evaluation successfully!");
             console.log();
         }
-    });
-});
-
-router.get('/evaluationid', function (req, res) {
-    var query = 'SELECT evaluation_id FROM evaluation';
-
-    connection.query(query, function (err, result) {
-        if (err){
-            res.status(404).send("Niet gevonden");
-            return;
-        }
-
-        res.status(200).json(result);
     });
 });
